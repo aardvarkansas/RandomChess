@@ -76,7 +76,7 @@ int main(int argc, const char * argv[])
 
 			try
 			{
-			
+				std::regex pat{ R"(\d\d?)" };
 				char *next_token;
 
 				std::cout << "input: " << input << std::endl;
@@ -87,11 +87,15 @@ int main(int argc, const char * argv[])
 					continue;
 				}
 
-				origin = atoi(strtok_s(input, seps.c_str(), &next_token));
+				std::string first_input = strtok_s(input, seps.c_str(), &next_token);
+				if (!std::regex_match(first_input, pat))
+				{
+					std::cout << "Bad inpoot.";
+					continue;
+				}
+				origin = atoi(first_input.c_str());
 
 				std::cout << "origin: " << origin << std::endl;
-
-				std::regex pat{ R"(\d\d?)" };
 
 				if (*next_token == '\0' || !std::regex_match(next_token, pat))
 				{
