@@ -13,6 +13,7 @@
 #include <exception>
 #include <stdexcept>
 #include "board.h"
+#include "player.h"
 
 int main(int argc, const char * argv[])
 {
@@ -37,32 +38,20 @@ int main(int argc, const char * argv[])
 		try
 		{
 
-			char input[32];
+			Player *myPlayer = new Player();
 
-			std::cout << std::endl << "Enter your move: ";
-			std::cin.clear();
-			std::cin.sync();
-			std::cin.getline(input, 32, '\n');
+			char input[sizeof(char)*32];
+			
+			if (!myPlayer->GetNextMove(input))
+				return 0; // Quit the game.
+
 
 			// this is a flag made necessary because calling continue in the nested if statement below
 			// doesn't continue the while statement above, and causes an assert fail for the string 
 			// processing of the move numbers from std input
 			bool continue_flag = false;
 
-			if (!strcmp(input, "q"))
-			{
-				//continue;
-				std::cout << "Quitting? Press y to quit, n to continue: ";
-				char quit_char;
-				std::cin.get(quit_char);
-				if (quit_char == 'y')
-				{
-					return 0;
-				}
-				else{
-					continue_flag = true;
-				}
-			}
+			
 
 			// check to see if we should continue
 			if (continue_flag)

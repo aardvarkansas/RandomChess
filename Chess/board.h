@@ -116,6 +116,8 @@ namespace ChessBoard
 		Piece::color WhoseMove();
         bool Move(const int start, const int destination);
         bool IsInCheck(Piece::color color_of_king, Board& changedState);
+		bool IsSameTeam(int start, int destination);
+		int ValidateMove(const int start, const int destination);
 
 		// to do typedef and make a return value for validate move
 		inline enum moveErrorCodes {
@@ -125,10 +127,6 @@ namespace ChessBoard
 			SAME_TEAM = 3,
 			EMPTY_SPACE = 4
 		};
-
-		bool IsSameTeam(int start, int destination);
-
-        int ValidateMove(const int start, const int destination);
         std::string GetPieceName(Piece::pieceType);
         Space *theSpaces[64];
         
