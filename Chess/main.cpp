@@ -12,19 +12,19 @@
 #include <regex>
 #include <exception>
 #include <stdexcept>
-#include "board.h"
 #include "player.h"
+#include "game.h"
 
 int main(int argc, const char * argv[])
 {
     
-	ChessBoard::Board myBoard;
+	Game myGame;
    
     std::cout << "\n";
     
-    myBoard.StartGame();
+	myGame.StartGame();
     
-    myBoard.PrintBoard();
+	myGame.PrintBoard();
 
 	int origin=0, destination;
 	
@@ -37,15 +37,23 @@ int main(int argc, const char * argv[])
 	{
 		try
 		{
-
-			Player *myPlayer = new Player();
+			Player *myPlayer_orange = new Player();
+			Player *myPlayer_purple = new Player(false);
 
 			char input[sizeof(char)*32];
 			
-			if (!myPlayer->GetNextMove(input))
-				return 0; // Quit the game.
+			if (myGame.WhoseMove() == ChessBoard::Piece::color::purple)
+			{
+				if (!myPlayer_purple->GetNextMove(input))
+					return 0; // Quit the game if the next move function returns false.
+			}
+			else
+			{
+				if (!myPlayer_orange->GetNextMove(input))
+					return 0; // Quit the game if the next move function returns false.
+			}
 
-
+			
 			// this is a flag made necessary because calling continue in the nested if statement below
 			// doesn't continue the while statement above, and causes an assert fail for the string 
 			// processing of the move numbers from std input
@@ -118,8 +126,8 @@ int main(int argc, const char * argv[])
 			if (!std::cin.fail())
 			{
 				std::cout << std::endl << origin << " " << destination;
-				myBoard.Move(origin, destination);
-				myBoard.PrintBoard();
+				myGame.Move(origin, destination);
+				myGame.PrintBoard();
 			}
 			else {
 				std::cin.clear();
@@ -277,7 +285,7 @@ int main(int argc, const char * argv[])
     std::cout << "\n\n\n\n\n";
     */
 
-    myBoard.PrintMoves();
+	myGame.PrintMoves();
     
     
     char myChar;

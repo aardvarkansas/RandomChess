@@ -5,6 +5,12 @@
 
 Player::Player()
 {
+	isHuman = true;
+}
+
+Player::Player(bool isHuman)
+{
+	this->isHuman = isHuman;
 }
 
 
@@ -31,16 +37,34 @@ bool ConfirmQuit()
 // If this returns false, that means the player has quit.
 bool Player::GetNextMove(char input[32])
 {
-	std::cout << std::endl << "Enter your move: ";
-	std::cin.clear();
-	std::cin.sync();
-	std::cin.getline(input, 32, '\n');
-
-
-	if (!strcmp(input, "q") && ConfirmQuit())
+	if (this->isHuman)
 	{
-		return false;
+		std::cout << std::endl << "Enter your move: ";
+		std::cin.clear();
+		std::cin.sync();
+		std::cin.getline(input, 32, '\n');
+
+
+		if (!strcmp(input, "q") && ConfirmQuit())
+		{
+			return false;
+		}
 	}
 
+	else // it's an NPC
+	{
+		GetRandomMove(input);
+		return true;
+	}
+
+	return true;
+}
+
+bool Player::GetRandomMove(char *input)
+{
+	for (int i = 0; i < sizeof(input) / sizeof(char); i++)
+		input[i] = '\0';
+	char * my_input = { "48 40" };
+	strcat_s(input,32,my_input);
 	return true;
 }

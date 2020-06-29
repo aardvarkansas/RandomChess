@@ -43,8 +43,8 @@ namespace ChessBoard
         bool hasMoved = false; // indicates whether the piece has moved already in the game.
         enum color {
             none = 0,
-            black = 1,
-            white = 2,
+            purple = 1,
+            orange = 2,
         };
         enum pieceType {
             empty = 0,
@@ -75,13 +75,10 @@ namespace ChessBoard
         right=2,
         downRight = 3,
         down=4,
-        downLeft = 5,
-        left =6,
+        downLeft=5,
+        left=6,
         upLeft=7
     };
-    
-    
-
 
     class Space
     {
@@ -104,6 +101,7 @@ namespace ChessBoard
     
     class Board
     {
+
 	private:
 		Piece::color whoseMove;
     public:
@@ -112,7 +110,7 @@ namespace ChessBoard
         void StartGame();
         void PrintBoard();
         void PrintMoves();
-        std::string BlackOrWhite(const int spaceID);
+        std::string PurpleOrOrange(const int spaceID);
 		Piece::color WhoseMove();
         bool Move(const int start, const int destination);
         bool IsInCheck(Piece::color color_of_king, Board& changedState);

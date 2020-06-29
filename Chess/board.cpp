@@ -182,12 +182,12 @@ ChessBoard::Board::Board()
 }
 
 // This function is used to print the terminal version of the chess board.
-std::string ChessBoard::Board::BlackOrWhite(const int spaceID)
+std::string ChessBoard::Board::PurpleOrOrange(const int spaceID)
 {
     std::string myType; // type of piece, e.g., bishop pawn rook king queen
 
-	// this routine uppercases the strings for any black pieces
-    if (theSpaces[spaceID]->currentPiece.myColor == Piece::color::black)
+	// this routine uppercases the strings for any purple pieces
+    if (theSpaces[spaceID]->currentPiece.myColor == Piece::color::purple)
     {
         for (auto &myChar : GetPieceName(theSpaces[spaceID]->currentPiece.myType))
             myType += std::toupper(myChar);
@@ -215,7 +215,7 @@ void ChessBoard::Board::PrintBoard()
         char newLine = '\n';
         if (i%8 != 0) newLine = ' ';
        
-        std::cout <<  newLine << std::setw(8) << BlackOrWhite(i);
+        std::cout <<  newLine << std::setw(8) << PurpleOrOrange(i);
     }
 }
 
@@ -281,6 +281,7 @@ bool ChessBoard::Board::Move(const int start, const int destination)
         Piece *tempPiece = new Piece();
         Piece *capturedPiece = new Piece();
         tempPiece->myType = Piece::pieceType::empty;
+		tempPiece->myColor = Piece::color::none;
         *capturedPiece = this->theSpaces[destination]->currentPiece;
         
         std::cout << std::endl << std::to_string(capturedPiece->myType) << std::setw(8) << std::to_string(capturedPiece->myColor);
@@ -288,7 +289,7 @@ bool ChessBoard::Board::Move(const int start, const int destination)
         std::string capturedPieceString = "";
         if (capturedPiece->myType != Piece::pieceType::empty)
         {
-            capturedPieceString = "_x" + BlackOrWhite(destination);
+            capturedPieceString = "_x" + PurpleOrOrange(destination);
         }
         
         this->theSpaces[destination]->currentPiece = this->theSpaces[start]->currentPiece;
@@ -298,7 +299,7 @@ bool ChessBoard::Board::Move(const int start, const int destination)
         this->theMoves.push_back(std::to_string(theMoves.size()) + "_" + std::to_string(this->theSpaces[destination]->currentPiece.myType) + "_" + std::to_string(this->theSpaces[destination]->currentPiece.myColor) + "_" + std::to_string(start)+ "_" + std::to_string(destination) + capturedPieceString);
         
 		//switch the move to the other color
-		(this->whoseMove == Piece::color::black) ? this->whoseMove = Piece::color::white : this->whoseMove = Piece::color::black;
+		(this->whoseMove == Piece::color::purple) ? this->whoseMove = Piece::color::orange : this->whoseMove = Piece::color::purple;
 
         return true;
     }
@@ -579,8 +580,8 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
         }
         case (Piece::pieceType::pawn):
         {
-            // if it's a black pawn
-            if (this->theSpaces[start]->currentPiece.myColor == Piece::color::black)
+            // if it's a purple pawn
+            if (this->theSpaces[start]->currentPiece.myColor == Piece::color::purple)
             {
                 // if it's going one space
                 if (destination==start-8)
@@ -620,7 +621,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                 }
                 
             }
-            //then it's a white pawn
+            //then it's a orange pawn
             else
             {
                 if (destination==start+8)
@@ -917,22 +918,22 @@ ChessBoard::Piece::color ChessBoard::Board::WhoseMove()
 
 void ChessBoard::Board::StartGame()
 {
-    this->theSpaces[0]->currentPiece = *(new Piece(Piece::pieceType::rook, Piece::color::white));
-    this->theSpaces[1]->currentPiece= *(new Piece(Piece::pieceType::knight, Piece::color::white));
-    this->theSpaces[2]->currentPiece= *(new Piece(Piece::pieceType::bishop, Piece::color::white));
-    this->theSpaces[3]->currentPiece= *(new Piece(Piece::pieceType::queen, Piece::color::white));
-    this->theSpaces[4]->currentPiece= *(new Piece(Piece::pieceType::king, Piece::color::white));
-    this->theSpaces[5]->currentPiece= *(new Piece(Piece::pieceType::bishop, Piece::color::white));
-    this->theSpaces[6]->currentPiece= *(new Piece(Piece::pieceType::knight, Piece::color::white));
-    this->theSpaces[7]->currentPiece= *(new Piece(Piece::pieceType::rook, Piece::color::white));
-    this->theSpaces[8]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::white));
-    this->theSpaces[9]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::white));
-    this->theSpaces[10]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::white));
-    this->theSpaces[11]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::white));
-    this->theSpaces[12]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::white));
-    this->theSpaces[13]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::white));
-    this->theSpaces[14]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::white));
-    this->theSpaces[15]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::white));
+    this->theSpaces[0]->currentPiece = *(new Piece(Piece::pieceType::rook, Piece::color::orange));
+    this->theSpaces[1]->currentPiece= *(new Piece(Piece::pieceType::knight, Piece::color::orange));
+    this->theSpaces[2]->currentPiece= *(new Piece(Piece::pieceType::bishop, Piece::color::orange));
+    this->theSpaces[3]->currentPiece= *(new Piece(Piece::pieceType::queen, Piece::color::orange));
+    this->theSpaces[4]->currentPiece= *(new Piece(Piece::pieceType::king, Piece::color::orange));
+    this->theSpaces[5]->currentPiece= *(new Piece(Piece::pieceType::bishop, Piece::color::orange));
+    this->theSpaces[6]->currentPiece= *(new Piece(Piece::pieceType::knight, Piece::color::orange));
+    this->theSpaces[7]->currentPiece= *(new Piece(Piece::pieceType::rook, Piece::color::orange));
+    this->theSpaces[8]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
+    this->theSpaces[9]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
+    this->theSpaces[10]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
+    this->theSpaces[11]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
+    this->theSpaces[12]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
+    this->theSpaces[13]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
+    this->theSpaces[14]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
+    this->theSpaces[15]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
 
     for (size_t i=16;i<48;++i)
     {
@@ -940,24 +941,24 @@ void ChessBoard::Board::StartGame()
     }
     
     
-    this->theSpaces[48]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::black));
-    this->theSpaces[49]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::black));
-    this->theSpaces[50]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::black));
-    this->theSpaces[51]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::black));
-    this->theSpaces[52]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::black));
-    this->theSpaces[53]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::black));
-    this->theSpaces[54]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::black));
-    this->theSpaces[55]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::black));
-    this->theSpaces[56]->currentPiece= *(new Piece(Piece::pieceType::rook, Piece::color::black));
-    this->theSpaces[57]->currentPiece= *(new Piece(Piece::pieceType::knight, Piece::color::black));
-    this->theSpaces[58]->currentPiece= *(new Piece(Piece::pieceType::bishop, Piece::color::black));
-    this->theSpaces[59]->currentPiece= *(new Piece(Piece::pieceType::queen, Piece::color::black));
-    this->theSpaces[60]->currentPiece= *(new Piece(Piece::pieceType::king, Piece::color::black));
-    this->theSpaces[61]->currentPiece= *(new Piece(Piece::pieceType::bishop, Piece::color::black));
-    this->theSpaces[62]->currentPiece= *(new Piece(Piece::pieceType::knight, Piece::color::black));
-    this->theSpaces[63]->currentPiece= *(new Piece(Piece::pieceType::rook, Piece::color::black));
+    this->theSpaces[48]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
+    this->theSpaces[49]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
+    this->theSpaces[50]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
+    this->theSpaces[51]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
+    this->theSpaces[52]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
+    this->theSpaces[53]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
+    this->theSpaces[54]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
+    this->theSpaces[55]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
+    this->theSpaces[56]->currentPiece= *(new Piece(Piece::pieceType::rook, Piece::color::purple));
+    this->theSpaces[57]->currentPiece= *(new Piece(Piece::pieceType::knight, Piece::color::purple));
+    this->theSpaces[58]->currentPiece= *(new Piece(Piece::pieceType::bishop, Piece::color::purple));
+    this->theSpaces[59]->currentPiece= *(new Piece(Piece::pieceType::queen, Piece::color::purple));
+    this->theSpaces[60]->currentPiece= *(new Piece(Piece::pieceType::king, Piece::color::purple));
+    this->theSpaces[61]->currentPiece= *(new Piece(Piece::pieceType::bishop, Piece::color::purple));
+    this->theSpaces[62]->currentPiece= *(new Piece(Piece::pieceType::knight, Piece::color::purple));
+    this->theSpaces[63]->currentPiece= *(new Piece(Piece::pieceType::rook, Piece::color::purple));
 
-	this->whoseMove = Piece::color::white;
+	this->whoseMove = Piece::color::orange;
 
 }
 
