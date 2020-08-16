@@ -6,13 +6,12 @@
 class Game
 {
 
-private:
-	ChessBoard::Board myBoard;
 public:
 	Game();
 	~Game();
 
 	Player player[2];
+	ChessBoard::Board myBoard;
 
 	void StartGame();
 	void PrintBoard();

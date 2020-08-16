@@ -15,6 +15,22 @@
 #include "player.h"
 #include "game.h"
 
+bool ClearBuffer(char *input)
+{
+	try
+	{
+		std::cin.clear();
+		for (int i = 0; i < sizeof(input) / sizeof(char); i++)
+		input[i] = '\0';
+	}
+	catch (std::exception)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 int main(int argc, const char * argv[])
 {
     
@@ -37,19 +53,21 @@ int main(int argc, const char * argv[])
 	{
 		try
 		{
-			Player *myPlayer_orange = new Player();
-			Player *myPlayer_purple = new Player(false);
+			Player *myPlayer_orange = new Player(ChessBoard::Piece::color::orange, true);
+			Player *myPlayer_purple = new Player(ChessBoard::Piece::color::purple, false);
 
 			char input[sizeof(char)*32];
+
+			ClearBuffer(input);
 			
 			if (myGame.WhoseMove() == ChessBoard::Piece::color::purple)
 			{
-				if (!myPlayer_purple->GetNextMove(input))
+				if (!myPlayer_purple->GetNextMove(input, myGame.myBoard))
 					return 0; // Quit the game if the next move function returns false.
 			}
 			else
 			{
-				if (!myPlayer_orange->GetNextMove(input))
+				if (!myPlayer_orange->GetNextMove(input, myGame.myBoard))
 					return 0; // Quit the game if the next move function returns false.
 			}
 
@@ -64,9 +82,7 @@ int main(int argc, const char * argv[])
 			// check to see if we should continue
 			if (continue_flag)
 			{
-				std::cin.clear();
-				for (int i = 0; i < sizeof(input) / sizeof(char); i++)
-					input[i] = '\0';
+				ClearBuffer(input);
 				continue;
 			}
 

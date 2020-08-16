@@ -1,4 +1,7 @@
 #pragma once
+
+#include "board.h"
+
 class Player
 {
 private:
@@ -6,12 +9,12 @@ private:
 	bool isHuman=false;
 public:
 	Player();
-	Player(bool isHuman);
+	Player(ChessBoard::Piece::color myColor, bool isHuman = true);
 	~Player();
 
 	char* GetNextMove();
 
-	bool GetRandomMove(char *input);
-	bool GetNextMove(char input[32]);
+	bool GetRandomMove(char *input, ChessBoard::Board &gameBoard, int seed);
+	bool GetNextMove(char input[32], ChessBoard::Board &gameBoard);
 };
 

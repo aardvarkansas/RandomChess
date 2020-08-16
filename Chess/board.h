@@ -5,6 +5,7 @@
 //  Created by User on 1/8/17.
 //  Copyright (c) 2017 User. All rights reserved.
 //
+#pragma once
 
 #ifndef __Chess__board__
 #define __Chess__board__
