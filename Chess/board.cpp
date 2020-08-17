@@ -584,41 +584,43 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
             if (this->theSpaces[start]->currentPiece.myColor == Piece::color::purple)
             {
                 // if it's going one space
-                if (destination==start-8)
+                if (destination == start - 8)
                 {
                     if (this->theSpaces[destination]->currentPiece.myType == Piece::pieceType::empty) return SUCCESS;
                     else return ILLEGAL_MOVE;
                 }
-                
+
                 // attacking right, if it's not the far rightmost pawn
-                else if ((start+1)%8 !=0 && destination == start-7)
+                else if ((start + 1) % 8 != 0 && destination == start - 7)
                 {
                     // if there's something to take
-                    if (this->theSpaces[start-7]->currentPiece.myType != Piece::pieceType::empty && this->theSpaces[start-7]->currentPiece.myColor != this->theSpaces[start]->currentPiece.myColor &&
+                    if (this->theSpaces[start - 7]->currentPiece.myType != Piece::pieceType::empty &&
+                        this->theSpaces[start - 7]->currentPiece.myColor != this->theSpaces[start]->currentPiece.myColor &&
                         this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::king)
                         return SUCCESS;
                     else return ILLEGAL_MOVE;
                 }
-                
+
                 // attacking left, if it's not the far leftmost pawn
-                else if (start % 8 !=0 && destination == start-9)
+                else if (start % 8 != 0 && destination == start - 9)
                 {
                     // if there's something to take
-                    if (this->theSpaces[start-9]->currentPiece.myType != Piece::pieceType::empty
-                        && this->theSpaces[start-9]->currentPiece.myColor != this->theSpaces[start]->currentPiece.myColor) return SUCCESS;
+                    if (this->theSpaces[start - 9]->currentPiece.myType != Piece::pieceType::empty
+                        && this->theSpaces[start - 9]->currentPiece.myColor != this->theSpaces[start]->currentPiece.myColor) return SUCCESS;
                     else return ILLEGAL_MOVE;
                 }
                 //if the starting position is on the front line of pawns
-                else if (start >= 48 && start <=55 && this->theSpaces[destination]->currentPiece.myType == Piece::pieceType::empty)
-                {                    
+                else if (start >= 48 && start <= 55 && this->theSpaces[destination]->currentPiece.myType == Piece::pieceType::empty)
+                {
                     //if it's going two spaces
-                    if (destination == start-16)
+                    if (destination == start - 16)
                     {
-                        if (this->theSpaces[start-8]->currentPiece.myType == Piece::pieceType::empty) return SUCCESS;
+                        if (this->theSpaces[start - 8]->currentPiece.myType == Piece::pieceType::empty) return SUCCESS;
                         else return ILLEGAL_MOVE;
                     }
-                                      
+
                 }
+                else return ILLEGAL_MOVE;
                 
             }
             //then it's a orange pawn

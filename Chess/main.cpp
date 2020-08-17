@@ -48,14 +48,16 @@ int main(int argc, const char * argv[])
 	std::string seps = R"( ,\t\n)";
 
 	char *token1;
+
+    Player* myPlayer_orange = new Player(ChessBoard::Piece::color::orange, true);
+    Player* myPlayer_purple = new Player(ChessBoard::Piece::color::purple, false);
+
 	
 	while (1==1)
 	{
 		try
 		{
-			Player *myPlayer_orange = new Player(ChessBoard::Piece::color::orange, true);
-			Player *myPlayer_purple = new Player(ChessBoard::Piece::color::purple, false);
-
+			
 			char input[sizeof(char)*32];
 
 			ClearBuffer(input);

@@ -58,8 +58,8 @@ bool Player::GetNextMove(char input[32], ChessBoard::Board &gameBoard)
 	else // it's an NPC
 	{
 		srand(static_cast<unsigned int>(time(nullptr)));
-		int seed = (rand() % 23) + 1;
-		return GetRandomMove(input, gameBoard, seed);
+		seed_for_random_move++;
+		return GetRandomMove(input, gameBoard, seed_for_random_move);
 	}
 
 	return true;
@@ -94,17 +94,6 @@ bool Player::GetRandomMove(char *input, ChessBoard::Board &gameBoard, int seed)
 	origin = list_source[(rand() % list_source.size())];
 	destination = list_destination[(rand() % list_destination.size())];
 
-	/*while (this->color != gameBoard.theSpaces[origin]->currentPiece.myColor)
-	{	
-		// if it picked a piece that's not the same team or an empty space
-		origin = (rand() % 64);
-	}*/
-
-	while (this->color == gameBoard.theSpaces[destination]->currentPiece.myColor)
-	{
-		// if it picked a destination with the same color piece
-		destination = (rand() % 64);
-	}
 	for (int i = 0; i < sizeof(input) / sizeof(char); i++)
 		input[i] = '\0';
 	char space[] = { " " };

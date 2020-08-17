@@ -7,6 +7,7 @@ class Player
 private:
 	int color;
 	bool isHuman=false;
+	unsigned int seed_for_random_move = 0;
 public:
 	Player();
 	Player(ChessBoard::Piece::color myColor, bool isHuman = true);
