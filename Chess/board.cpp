@@ -421,10 +421,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     while (currentSpace>0 && currentSpace>=destination)
                     {
                         if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
-                            || (currentSpace == destination && (
+                            && (currentSpace == destination && (
                                                                 this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
                                                                 && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
                             )
+                            return ILLEGAL_MOVE;
+                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace -= 8;
                         
@@ -436,10 +439,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     while (currentSpace<NUM_SPACES && currentSpace<=destination)
                     {
                         if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
-                            || (currentSpace == destination && (
+                            && (currentSpace == destination && (
                                                                 this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
                                                                 && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
                             )
+                            return ILLEGAL_MOVE;
+                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace += 8;
                         
@@ -460,10 +466,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     while (currentSpace >= destination)
                     {
                         if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
-                            || (currentSpace == destination && (
+                            && (currentSpace == destination && (
                                                                 this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
                                                                 && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
                             )
+                            return ILLEGAL_MOVE;
+                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace -= 1;
                     }
@@ -475,10 +484,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     while (currentSpace<=destination)
                     {
                         if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
-                            || (currentSpace == destination && (
+                            && (currentSpace == destination && (
                                                                 this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
                                                                 && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
                             )
+                            return ILLEGAL_MOVE;
+                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace += 1;
                         
@@ -675,10 +687,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     while (currentSpace>0 && currentSpace>=destination)
                     {
                         if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
-                            || (currentSpace == destination && (
+                            && (currentSpace == destination && (
                                         this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
                                         && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
                             )
+                            return ILLEGAL_MOVE;
+                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace -= 8;
                         
@@ -690,10 +705,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     while (currentSpace<NUM_SPACES && currentSpace<=destination)
                     {
                         if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
-                            || (currentSpace == destination && (
-                                                                this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
-                                                                && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
+                            && (currentSpace == destination && (
+                                this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
+                                && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
                             )
+                            return ILLEGAL_MOVE;
+                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace += 8;
                         
@@ -710,11 +728,15 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     while (currentSpace >= destination)
                     {
                         if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
-                            || (currentSpace == destination && (
+                            && (currentSpace == destination && (
                                                             this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
                                                             && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
                             )
                         return ILLEGAL_MOVE;
+
+                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            && (currentSpace != destination))
+                            return ILLEGAL_MOVE;
                         else currentSpace -= 1;
                     }
                 }
@@ -725,12 +747,17 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     while (currentSpace<=destination)
                     {
                         if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
-                            || (currentSpace == destination && (
+                            && (currentSpace == destination && (
                                                                 this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
                                                                 && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
                             )
                             return ILLEGAL_MOVE;
+                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            && (currentSpace != destination))
+                            return ILLEGAL_MOVE;
                         else currentSpace += 1;
+
+                        
                         
                     }
                 }
@@ -753,7 +780,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         while (currentSpace>0 && currentSpace>=destination)
                         {
                             if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
-                                || (currentSpace == destination && (this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
+                                && (currentSpace == destination && (this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
                                                                     && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
                                 )
                                 return ILLEGAL_MOVE;
@@ -773,10 +800,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         while (currentSpace<NUM_SPACES && currentSpace<=destination)
                         {
                             if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
-                                || (currentSpace == destination && (
+                                && (currentSpace == destination && (
                                                                     this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
                                                                     && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
                                 )
+                                return ILLEGAL_MOVE;
+                            else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                                && (currentSpace != destination))
                                 return ILLEGAL_MOVE;
                             else currentSpace += 8;
                             
@@ -821,10 +851,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         while (currentSpace >= destination)
                         {
                             if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
-                                || (currentSpace == destination && (
+                                && (currentSpace == destination && (
                                                                     this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
                                                                     && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
                                 )
+                                return ILLEGAL_MOVE;
+                            else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                                && (currentSpace != destination))
                                 return ILLEGAL_MOVE;
                             else currentSpace -= 1;
                         }
@@ -839,10 +872,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         while (currentSpace<=destination)
                         {
                             if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
-                                || (currentSpace == destination && (
+                                && (currentSpace == destination && (
                                                                     this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
                                                                     && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
                                 )
+                                return ILLEGAL_MOVE;
+                            else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                                && (currentSpace != destination))
                                 return ILLEGAL_MOVE;
                             else currentSpace += 1;
                             
