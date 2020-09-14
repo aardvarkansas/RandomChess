@@ -50,7 +50,7 @@ int main(int argc, const char * argv[])
 	char *token1;
 
     Player* myPlayer_orange = new Player(ChessBoard::Piece::color::orange, true);
-    Player* myPlayer_purple = new Player(ChessBoard::Piece::color::purple, false);
+    Player* myPlayer_purple = new Player(ChessBoard::Piece::color::purple, true);
 
 	
 	while (1==1)
