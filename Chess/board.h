@@ -13,6 +13,8 @@
 #include <iostream>
 #include <vector>
 
+#define NUM_SPACES 64
+
 #endif /* defined(__Chess__board__) */
 
 
@@ -104,9 +106,14 @@ namespace ChessBoard
     {
 
 	private:
-		Piece::color whoseMove;
+		Piece::color whoseMove = Piece::color::purple;
     public:
+        Space* theSpaces[64];
+
+        std::vector<std::string> theMoves;
+
         Board();
+        Board(const Board& rhs);
         ~Board();
         void StartGame();
         void PrintBoard();
@@ -114,9 +121,10 @@ namespace ChessBoard
         std::string PurpleOrOrange(const int spaceID);
 		Piece::color WhoseMove();
         bool Move(const int start, const int destination);
-        bool IsInCheck(Piece::color color_of_king, Board& changedState);
+        bool IsInCheck(Piece::color king_color, Board* changedState);
 		bool IsSameTeam(int start, int destination);
 		int ValidateMove(const int start, const int destination);
+        Board& proposeChange(Board &changedState, const int start, const int destination);
 
 		// to do typedef and make a return value for validate move
 		inline enum moveErrorCodes {
@@ -124,12 +132,11 @@ namespace ChessBoard
 			WRONG_TEAM = 1,
 			ILLEGAL_MOVE = 2,
 			SAME_TEAM = 3,
-			EMPTY_SPACE = 4
+			EMPTY_SPACE = 4,
+            MOVING_INTO_CHECK =5
 		};
         std::string GetPieceName(Piece::pieceType);
-        Space *theSpaces[64];
         
-        std::vector<std::string> theMoves;
         
     };
     
