@@ -16,6 +16,8 @@
 
 ChessBoard::Piece::Piece()
 {
+    myType = ChessBoard::Piece::pieceType::empty;
+    myColor = ChessBoard::Piece::color::none;
     //do nothing
 }
 ChessBoard::Piece & ChessBoard::Piece::operator= (const Piece &myPiece)
@@ -54,16 +56,20 @@ ChessBoard::Piece::~Piece()
  return *this;
  }
 */
-ChessBoard::Space::Space() {    };
+ChessBoard::Space::Space() {    
+    //currentPiece = new Piece();
+};
     
 ChessBoard::Space::~Space()
 {
-    spaceID = NULL;
+    delete currentPiece;
+    //spaceID = NULL;
 }
 
 ChessBoard::Space & ChessBoard::Space::operator= (const Space &mySpace)
 {
     this->spaceID = mySpace.spaceID;
+    this->currentPiece = mySpace.currentPiece;
     return *this;
 }
 
@@ -178,6 +184,94 @@ ChessBoard::Board::Board()
     }
     
     std::cout <<  std::endl;
+
+
+    this->theSpaces[0]->currentPiece->myColor = Piece::color::orange;
+    this->theSpaces[0]->currentPiece->myType = Piece::pieceType::rook;
+    this->theSpaces[1]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[1]->currentPiece->myType = Piece::pieceType::knight;
+    this->theSpaces[2]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[2]->currentPiece->myType = Piece::pieceType::bishop;
+    this->theSpaces[3]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[3]->currentPiece->myType = Piece::pieceType::queen;
+    this->theSpaces[4]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[4]->currentPiece->myType = Piece::pieceType::king;
+    this->theSpaces[5]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[5]->currentPiece->myType = Piece::pieceType::bishop;
+    this->theSpaces[6]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[6]->currentPiece->myType = Piece::pieceType::knight;
+    this->theSpaces[7]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[7]->currentPiece->myType = Piece::pieceType::rook;
+    this->theSpaces[8]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[8]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[9]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[9]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[10]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[10]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[11]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[11]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[12]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[12]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[13]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[13]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[14]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[14]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[15]->currentPiece->myColor = Piece::color::orange;
+	this->theSpaces[15]->currentPiece->myType = Piece::pieceType::pawn;
+
+    for (size_t i = 16; i < 48; ++i)
+    {
+        this->theSpaces[i]->currentPiece->myColor = Piece::color::none;
+	    this->theSpaces[i]->currentPiece->myType = Piece::pieceType::empty;
+    }
+
+
+    this->theSpaces[48]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[48]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[49]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[49]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[50]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[50]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[51]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[51]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[52]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[52]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[53]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[53]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[54]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[54]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[55]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[55]->currentPiece->myType = Piece::pieceType::pawn;
+    this->theSpaces[56]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[56]->currentPiece->myType = Piece::pieceType::rook;
+    this->theSpaces[57]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[57]->currentPiece->myType = Piece::pieceType::knight;
+    this->theSpaces[58]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[58]->currentPiece->myType = Piece::pieceType::bishop;
+    this->theSpaces[59]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[59]->currentPiece->myType = Piece::pieceType::queen;
+    this->theSpaces[60]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[60]->currentPiece->myType = Piece::pieceType::king;
+    this->theSpaces[61]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[61]->currentPiece->myType = Piece::pieceType::bishop;
+    this->theSpaces[62]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[62]->currentPiece->myType = Piece::pieceType::knight;
+    this->theSpaces[63]->currentPiece->myColor = Piece::color::purple;
+	this->theSpaces[63]->currentPiece->myType = Piece::pieceType::rook;
+
+}
+
+ChessBoard::Board::~Board()
+{
+    for (auto i = 0; i < NUM_SPACES; ++i)
+    {
+        if (theSpaces[i]->currentPiece!=nullptr)
+        {
+            //delete theSpaces[i]->currentPiece;
+        }
+       delete theSpaces[i];
+    }
+   // delete[] theSpaces;
 }
 
 ChessBoard::Board::Board(const ChessBoard::Board &rhs)
@@ -187,8 +281,8 @@ ChessBoard::Board::Board(const ChessBoard::Board &rhs)
         //theSpaces[i].InitializeAdjacentSpaces();
         theSpaces[i] = new Space();
         theSpaces[i]->spaceID = i;
-        theSpaces[i]->currentPiece.myType = rhs.theSpaces[i]->currentPiece.myType;
-        theSpaces[i]->currentPiece.myColor = rhs.theSpaces[i]->currentPiece.myColor;
+        theSpaces[i]->currentPiece->myType = rhs.theSpaces[i]->currentPiece->myType;
+        theSpaces[i]->currentPiece->myColor = rhs.theSpaces[i]->currentPiece->myColor;
     }
 
 
@@ -200,12 +294,12 @@ std::string ChessBoard::Board::PurpleOrOrange(const int spaceID)
     std::string myType; // type of piece, e.g., bishop pawn rook king queen
 
 	// this routine uppercases the strings for any purple pieces
-    if (theSpaces[spaceID]->currentPiece.myColor == Piece::color::purple)
+    if (theSpaces[spaceID]->currentPiece->myColor == Piece::color::purple)
     {
-        for (auto &myChar : GetPieceName(theSpaces[spaceID]->currentPiece.myType))
+        for (auto &myChar : GetPieceName(theSpaces[spaceID]->currentPiece->myType))
             myType += std::toupper(myChar);
     }
-    else myType = GetPieceName(theSpaces[spaceID]->currentPiece.myType);
+    else myType = GetPieceName(theSpaces[spaceID]->currentPiece->myType);
     
     return myType;
 }
@@ -248,41 +342,33 @@ std::string ChessBoard::Board::GetPieceName(Piece::pieceType thePiece)
 {
     switch (thePiece)
     {
-        case 0:
+    case Piece::pieceType::empty:
             return " - ";
             break;
-        case 1:
+        case Piece::pieceType::pawn:
             return "pawn";
             break;
-        case 2:
+        case Piece::pieceType::bishop:
             return "bishop";
             break;
-        case 3:
+        case Piece::pieceType::knight:
             return "knight";
             break;
-        case 4:
+        case Piece::pieceType::rook:
             return "rook";
             break;
-        case 5:
+        case Piece::pieceType::king:
             return "king";
             break;
-        case 6:
+        case Piece::pieceType::queen:
             return "queen";
             break;
         default:
-            return "unkonwn";
+            return "unknown";
             break;
             
     }
     
-}
-
-ChessBoard::Board::~Board()
-{
-    if (this->theSpaces!=NULL)
-    {
-        //free(this->theSpaces);
-    }
 }
 
 bool ChessBoard::Board::Move(const int start, const int destination)
@@ -291,30 +377,26 @@ bool ChessBoard::Board::Move(const int start, const int destination)
 
     if (returnCode == SUCCESS)
     {
-        Piece *tempPiece = new Piece();
-        Piece *capturedPiece = new Piece();
-        tempPiece->myType = Piece::pieceType::empty;
-		tempPiece->myColor = Piece::color::none;
-        *capturedPiece = this->theSpaces[destination]->currentPiece;
-        
-        std::cout << std::endl << std::to_string(capturedPiece->myType) << std::setw(8) << std::to_string(capturedPiece->myColor);
-       
+        std::cout << std::endl << std::to_string((int)this->theSpaces[destination]->currentPiece->myType) << std::setw(8) << std::to_string((int)this->theSpaces[destination]->currentPiece->myColor);
+
         std::string capturedPieceString = "";
-        if (capturedPiece->myType != Piece::pieceType::empty)
+        if (this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty)
         {
             capturedPieceString = "_x" + PurpleOrOrange(destination);
         }
-        
+        Piece* tempPiece = this->theSpaces[destination]->currentPiece; 
+        tempPiece->myType = Piece::pieceType::empty;
+        tempPiece->myColor = Piece::color::none;
         this->theSpaces[destination]->currentPiece = this->theSpaces[start]->currentPiece;
-        this->theSpaces[destination]->currentPiece.hasMoved = true;
-        this->theSpaces[start]->currentPiece = *tempPiece;
+        this->theSpaces[destination]->currentPiece->hasMoved = true;
+        this->theSpaces[start]->currentPiece = tempPiece;
         
-        this->theMoves.push_back(std::to_string(theMoves.size()) + "_" + std::to_string(this->theSpaces[destination]->currentPiece.myType) + "_" + std::to_string(this->theSpaces[destination]->currentPiece.myColor) + "_" + std::to_string(start)+ "_" + std::to_string(destination) + capturedPieceString);
+        this->theMoves.push_back(std::to_string(theMoves.size()) + "_" + std::to_string((int)this->theSpaces[destination]->currentPiece->myType) + "_" + std::to_string((int)this->theSpaces[destination]->currentPiece->myColor) + "_" + std::to_string(start)+ "_" + std::to_string(destination) + capturedPieceString);
         
 		//switch the move to the other color
 		(this->whoseMove == Piece::color::purple) ? this->whoseMove = Piece::color::orange : this->whoseMove = Piece::color::purple;
 
-        if (IsInCheck(this->whoseMove, this))
+        if (IsInCheck(this->whoseMove, *this))
             std::cout << "\n\n Your king is in check!!!\n\n";
 
         return true;
@@ -343,7 +425,7 @@ bool ChessBoard::Board::Move(const int start, const int destination)
     }
 }
 
-bool ChessBoard::Board::IsInCheck(Piece::color king_color, Board* changedState)
+bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &changedState)
 {
     //return false;
     bool is_in_check = false;
@@ -351,22 +433,25 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, Board* changedState)
 
     for (auto i = 0; i < NUM_SPACES; ++i)
     {
-        if (changedState->theSpaces[i]->currentPiece.myColor == king_color && changedState->theSpaces[i]->currentPiece.myType == Piece::pieceType::king)
+        if (changedState.theSpaces[i]->currentPiece->myColor == king_color 
+            && changedState.theSpaces[i]->currentPiece->myType == Piece::pieceType::king)
         {
             kingSpaceId = i;
+            break;
         }
     }
     // need to check for opposing team's rooks, queens, kings, bishops, knights, and pawns
     for (auto i=0; i < NUM_SPACES; ++i)
     {
-        if (changedState->theSpaces[i]->currentPiece.myColor != changedState->theSpaces[kingSpaceId]->currentPiece.myColor)
+        if (changedState.theSpaces[i]->currentPiece->myColor != changedState.theSpaces[kingSpaceId]->currentPiece->myColor
+            && changedState.theSpaces[i]->currentPiece->myType != Piece::pieceType::empty)
         {
-            switch (changedState->theSpaces[i]->currentPiece.myType)
+            switch (changedState.theSpaces[i]->currentPiece->myType)
             {
-                case (ChessBoard::Piece::pawn):
+                case (ChessBoard::Piece::pieceType::pawn):
                 {
-                    if (changedState->theSpaces[i]->currentPiece.myColor == Piece::color::orange
-                        && changedState->theSpaces[kingSpaceId]->currentPiece.myColor != Piece::color::orange)
+                    if (changedState.theSpaces[i]->currentPiece->myColor == Piece::color::orange
+                        && changedState.theSpaces[kingSpaceId]->currentPiece->myColor != Piece::color::orange)
                     { 
                         std::cout << "\n\norange pawn!\n\n\n";
                         if (i - 7 == kingSpaceId || i - 9 == kingSpaceId)
@@ -376,7 +461,7 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, Board* changedState)
                         }
 
                     }
-                    else if (changedState->theSpaces[kingSpaceId]->currentPiece.myColor == Piece::color::orange)
+                    else if (changedState.theSpaces[kingSpaceId]->currentPiece->myColor == Piece::color::orange)
                     {
                         if (i + 7 == kingSpaceId || i + 9 == kingSpaceId)
                         {
@@ -389,25 +474,35 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, Board* changedState)
                     break;
                 }
                     
-                case (ChessBoard::Piece::bishop):
+                case (ChessBoard::Piece::pieceType::bishop):
                 {
                     std::cout << "\n\nbishop!\n\n\n";
                     break;
                 }
                     
-                case (ChessBoard::Piece::knight):
+                case (ChessBoard::Piece::pieceType::knight):
                 {
                     std::cout << "\n\nknight!\n\n\n";
+
+                    Space lSpaces[8];
+                    this->theSpaces[i]->GetLSpaces(lSpaces);
+                    for (auto i = 0; i < 8; i++)
+                    {
+                        if (lSpaces[i].spaceID == kingSpaceId)
+                        {
+                            is_in_check = true;
+                        }
+                    }
                     break;
                 }
                     
-                case (ChessBoard::Piece::rook):
+                case (ChessBoard::Piece::pieceType::rook):
                 {
                     std::cout << "\n\nrook!\n\n\n";
                     break;
                 }
                     
-                case (ChessBoard::Piece::queen):
+                case (ChessBoard::Piece::pieceType::queen):
                 {
                     // get the minimum value of the spaces
                     auto min_space = std::min(i, kingSpaceId);
@@ -422,7 +517,7 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, Board* changedState)
                         // check to see if there are any pieces in between
                         for (min_space += 7; min_space < max_space; min_space += 7)
                         {
-                            if (theSpaces[min_space]->currentPiece.myType != Piece::empty)
+                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
                             {
                                 is_occluded = true;
                                 break;
@@ -440,7 +535,7 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, Board* changedState)
                         // check to see if there are any pieces in between
                         for (min_space += 9; min_space < max_space; min_space += 9)
                         {
-                            if (theSpaces[min_space]->currentPiece.myType != Piece::empty)
+                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
                             {
                                 is_occluded = true;
                                 break;
@@ -457,7 +552,7 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, Board* changedState)
                         // check to see if there are any pieces in between
                         for (min_space+=8; min_space < max_space; min_space += 8)
                         {
-                            if (theSpaces[min_space]->currentPiece.myType != Piece::empty)
+                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
                             {
                                 is_occluded = true;
                                 break;
@@ -472,7 +567,7 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, Board* changedState)
                     std::cout << "\n\nqueen!\n\n\n";
                     break;
                 }
-                case (ChessBoard::Piece::king):
+                case (ChessBoard::Piece::pieceType::king):
                 {
                     std::cout << "\n\nking!\n\n\n";
                     break;
@@ -490,15 +585,20 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, Board* changedState)
 
 bool ChessBoard::Board::IsSameTeam(int start, int destination)
 {
-	if (this->theSpaces[destination]->currentPiece.myColor == this->theSpaces[start]->currentPiece.myColor) return false;
+	if (this->theSpaces[destination]->currentPiece->myColor == this->theSpaces[start]->currentPiece->myColor) return false;
 	else return true;
 }
 
-ChessBoard::Board& ChessBoard::Board::proposeChange(ChessBoard::Board& changedState, const int start, const int destination)
+ChessBoard::Board& ChessBoard::Board::proposeChange(ChessBoard::Board &changedState, const int start, const int destination)
 {
-    changedState.theSpaces[destination]->currentPiece = changedState.theSpaces[start]->currentPiece;
-    changedState.theSpaces[start]->currentPiece.myType = ChessBoard::Piece::empty;
-    changedState.theSpaces[start]->currentPiece.myColor = ChessBoard::Piece::color::none;
+
+    changedState.theSpaces[destination]->currentPiece->myColor = changedState.theSpaces[start]->currentPiece->myColor;
+    changedState.theSpaces[destination]->currentPiece->myType = changedState.theSpaces[start]->currentPiece->myType;
+    changedState.theSpaces[destination]->currentPiece->hasMoved = true;
+    changedState.theSpaces[start]->currentPiece->hasMoved = true;
+    changedState.theSpaces[start]->currentPiece->myColor = Piece::color::none;
+    changedState.theSpaces[start]->currentPiece->myType = Piece::pieceType::empty;
+
 
     return changedState;
 }
@@ -518,14 +618,24 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
 		) return ILLEGAL_MOVE;
     
 	// if it's not the turn of the color of the piece that's being moved.
-	if (this->theSpaces[start]->currentPiece.myColor == Piece::color::none)
+	if (this->theSpaces[start]->currentPiece->myColor == Piece::color::none)
 		return EMPTY_SPACE;
 
 	// if it's not the turn of the color of the piece that's being moved.
-	else if (this->theSpaces[start]->currentPiece.myColor != WhoseMove())
+	else if (this->theSpaces[start]->currentPiece->myColor != WhoseMove())
 		return WRONG_TEAM;
 
-    switch (this->theSpaces[start]->currentPiece.myType)
+    // if the proposed move puts the king in check, invalidate move
+    ChessBoard::Board* out_changed_state = new ChessBoard::Board(*this);
+    proposeChange(*out_changed_state, start, destination);
+    if (IsInCheck(this->theSpaces[start]->currentPiece->myColor, *out_changed_state))
+    {
+        delete out_changed_state;
+        return MOVING_INTO_CHECK;
+    }
+    delete out_changed_state;
+
+    switch (this->theSpaces[start]->currentPiece->myType)
     {
         case (Piece::pieceType::empty):
         {            
@@ -542,13 +652,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     int currentSpace = start - 8;
                     while (currentSpace>0 && currentSpace>=destination)
                     {
-                        if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace == destination && (
-                                                                this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
-                                                                && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
+                                                                this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                                                                && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
                             )
                             return ILLEGAL_MOVE;
-                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace -= 8;
@@ -560,13 +670,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     int currentSpace = start + 8;
                     while (currentSpace<NUM_SPACES && currentSpace<=destination)
                     {
-                        if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace == destination && (
-                                                                this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
-                                                                && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
+                                                                this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                                                                && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
                             )
                             return ILLEGAL_MOVE;
-                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace += 8;
@@ -587,13 +697,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     int currentSpace = start - 1;
                     while (currentSpace >= destination)
                     {
-                        if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace == destination && (
-                                                                this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
-                                                                && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
+                                                                this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                                                                && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
                             )
                             return ILLEGAL_MOVE;
-                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace -= 1;
@@ -605,13 +715,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     int currentSpace = start + 1;
                     while (currentSpace<=destination)
                     {
-                        if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace == destination && (
-                                                                this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
-                                                                && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
+                                                                this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                                                                && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
                             )
                             return ILLEGAL_MOVE;
-                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace += 1;
@@ -623,7 +733,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
             
             // if she's moving diagonally, checks for non-empty spaces
 
-            else if ((((destination - start) % 7 == 0) || ((destination - start) % 9 == 0)) && (this->theSpaces[destination]->currentPiece.myColor != this->theSpaces[start]->currentPiece.myColor))
+            else if ((((destination - start) % 7 == 0) || ((destination - start) % 9 == 0)) && (this->theSpaces[destination]->currentPiece->myColor != this->theSpaces[start]->currentPiece->myColor))
             {
                 int currentSpace = start;
                 while (currentSpace<NUM_SPACES && currentSpace>=0)
@@ -639,13 +749,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         else currentSpace-=9;
                     }
                     
-                    if (currentSpace!=destination && this->theSpaces[currentSpace]->currentPiece.myType!=Piece::pieceType::empty)
+                    if (currentSpace!=destination && this->theSpaces[currentSpace]->currentPiece->myType!=Piece::pieceType::empty)
                     {
                         // if it's trying to cross over a non-empty space
                         return ILLEGAL_MOVE;
                     }
                     
-                    if (this->theSpaces[currentSpace]->currentPiece.myColor == this->theSpaces[start]->currentPiece.myColor) return ILLEGAL_MOVE;
+                    if (this->theSpaces[currentSpace]->currentPiece->myColor == this->theSpaces[start]->currentPiece->myColor) return ILLEGAL_MOVE;
                     
                     if (currentSpace == destination)
                     {
@@ -671,7 +781,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     ((destination - start) < 0 && (destination - start) % 9 == 0 && (destination % 8 < start % 8))
                 )
                 && 
-                (this->theSpaces[destination]->currentPiece.myColor != this->theSpaces[start]->currentPiece.myColor)
+                (this->theSpaces[destination]->currentPiece->myColor != this->theSpaces[start]->currentPiece->myColor)
                )
                 {
                     int currentSpace = start;
@@ -690,13 +800,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         }
                         
                         if (currentSpace!=destination 
-                            && this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty)
+                            && this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty)
                         {
                             // if it's trying to cross over a non-empty space
                             return ILLEGAL_MOVE;
                         }
                         
-                        if (this->theSpaces[currentSpace]->currentPiece.myColor == this->theSpaces[start]->currentPiece.myColor) return ILLEGAL_MOVE;
+                        if (this->theSpaces[currentSpace]->currentPiece->myColor == this->theSpaces[start]->currentPiece->myColor) return ILLEGAL_MOVE;
                         
                         if (currentSpace == destination)
                         {
@@ -733,12 +843,12 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
 
             // if it's a purple pawn
          
-            if (this->theSpaces[start]->currentPiece.myColor == Piece::color::purple)
+            if (this->theSpaces[start]->currentPiece->myColor == Piece::color::purple)
             {
                 // if it's going one space
                 if (destination == start - 8)
                 {
-                    if (this->theSpaces[destination]->currentPiece.myType == Piece::pieceType::empty) return SUCCESS;
+                    if (this->theSpaces[destination]->currentPiece->myType == Piece::pieceType::empty) return SUCCESS;
                     else return ILLEGAL_MOVE;
                 }
 
@@ -746,9 +856,9 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                 else if ((start + 1) % 8 != 0 && destination == start - 7)
                 {
                     // if there's something to take
-                    if (this->theSpaces[start - 7]->currentPiece.myType != Piece::pieceType::empty &&
-                        this->theSpaces[start - 7]->currentPiece.myColor != this->theSpaces[start]->currentPiece.myColor &&
-                        this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::king)
+                    if (this->theSpaces[start - 7]->currentPiece->myType != Piece::pieceType::empty &&
+                        this->theSpaces[start - 7]->currentPiece->myColor != this->theSpaces[start]->currentPiece->myColor &&
+                        this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::king)
                         return SUCCESS;
                     else return ILLEGAL_MOVE;
                 }
@@ -757,9 +867,9 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                 else if (start % 8 != 0 && destination == start - 9)
                 {
                     // if there's something to take
-                    if (this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty &&
-                        this->theSpaces[destination]->currentPiece.myColor != this->theSpaces[start]->currentPiece.myColor &&
-                        this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::king)
+                    if (this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty &&
+                        this->theSpaces[destination]->currentPiece->myColor != this->theSpaces[start]->currentPiece->myColor &&
+                        this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::king)
                         return SUCCESS;
                     else return ILLEGAL_MOVE;
                 }
@@ -767,9 +877,9 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                 else if (start >= 48 && start <= 55)
                 {
                     //if it's going two spaces
-                    if (destination == start - 16 && this->theSpaces[destination]->currentPiece.myType == Piece::pieceType::empty)
+                    if (destination == start - 16 && this->theSpaces[destination]->currentPiece->myType == Piece::pieceType::empty)
                     {
-                        if (this->theSpaces[start - 8]->currentPiece.myType == Piece::pieceType::empty)
+                        if (this->theSpaces[start - 8]->currentPiece->myType == Piece::pieceType::empty)
                             return SUCCESS;
                         else return ILLEGAL_MOVE;
                     }
@@ -784,16 +894,16 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
             {
                 if (destination==start+8)
                 {
-                    if (this->theSpaces[destination]->currentPiece.myType == Piece::pieceType::empty) return SUCCESS;
+                    if (this->theSpaces[destination]->currentPiece->myType == Piece::pieceType::empty) return SUCCESS;
                     else return ILLEGAL_MOVE;
                 }
                 // attacking right, if it's not the far rightmost pawn
                 else if (start % 8 !=0 && destination == start+7)
                 {
                     // if there's something to take
-                    if (this->theSpaces[start+7]->currentPiece.myType != Piece::pieceType::empty &&
-                        this->theSpaces[start + 7]->currentPiece.myColor != this->theSpaces[start]->currentPiece.myColor &&
-                        this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::king)
+                    if (this->theSpaces[start+7]->currentPiece->myType != Piece::pieceType::empty &&
+                        this->theSpaces[start + 7]->currentPiece->myColor != this->theSpaces[start]->currentPiece->myColor &&
+                        this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::king)
                         return SUCCESS;
                     else return ILLEGAL_MOVE;
                 }
@@ -802,8 +912,8 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                 else if ((start+1)%8 !=0 && destination == start+9)
                 {
                     // if there's something to take
-                    if (this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty && 
-                        this->theSpaces[destination]->currentPiece.myColor != this->theSpaces[start]->currentPiece.myColor)
+                    if (this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty && 
+                        this->theSpaces[destination]->currentPiece->myColor != this->theSpaces[start]->currentPiece->myColor)
                         return SUCCESS;
                     else return ILLEGAL_MOVE;
                 }
@@ -812,9 +922,9 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                 else if (start >= 8 && start <=15)
                 {
                     //if it's going two spaces
-                    if (destination == start+16 && this->theSpaces[destination]->currentPiece.myType == Piece::pieceType::empty)
+                    if (destination == start+16 && this->theSpaces[destination]->currentPiece->myType == Piece::pieceType::empty)
                     {
-                        if (this->theSpaces[start+8]->currentPiece.myType == Piece::pieceType::empty) 
+                        if (this->theSpaces[start+8]->currentPiece->myType == Piece::pieceType::empty) 
                             return SUCCESS;
                         else return ILLEGAL_MOVE;
                     }
@@ -836,13 +946,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     int currentSpace = start - 8;
                     while (currentSpace > 0 && currentSpace >= destination)
                     {
-                        if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace == destination && (
-                                this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
-                                && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
+                                this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                                && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
                             )
                             return ILLEGAL_MOVE;
-                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace -= 8;
@@ -854,13 +964,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     int currentSpace = start + 8;
                     while (currentSpace < NUM_SPACES && currentSpace <= destination)
                     {
-                        if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace == destination && (
-                                this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
-                                && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
+                                this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                                && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
                             )
                             return ILLEGAL_MOVE;
-                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace += 8;
@@ -877,14 +987,14 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     int currentSpace = start - 1;
                     while (currentSpace >= destination)
                     {
-                        if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace == destination && (
-                                this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
-                                && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
+                                this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                                && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
                             )
                             return ILLEGAL_MOVE;
 
-                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace -= 1;
@@ -896,13 +1006,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     int currentSpace = start + 1;
                     while (currentSpace <= destination)
                     {
-                        if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace == destination && (
-                                this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
-                                && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
+                                this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                                && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
                             )
                             return ILLEGAL_MOVE;
-                        else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                        else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace += 1;
@@ -918,12 +1028,6 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         
            case Piece::pieceType::king:
             {
-                ChessBoard::Board changedState(*this);
-
-                // if the proposed move puts the king in check, invalidate move
-                if (IsInCheck(this->theSpaces[start]->currentPiece.myColor,&proposeChange(changedState, start, destination)))
-                    return MOVING_INTO_CHECK;
-
                 // if he's going vertically
                 // this if statement checks for non-empty spaces between start and destination
                 if ((start % 8) == (destination%8))
@@ -936,9 +1040,9 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         int currentSpace = start - 8; //go to the next space in the column
                         while (currentSpace>0 && currentSpace>=destination)
                         {
-                            if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
-                                && (currentSpace == destination && (this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
-                                                                    && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
+                            if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
+                                && (currentSpace == destination && (this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                                                                    && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
                                 )
                                 return ILLEGAL_MOVE;
                             else currentSpace -= 8;
@@ -956,13 +1060,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         int currentSpace = start + 8;
                         while (currentSpace<NUM_SPACES && currentSpace<=destination)
                         {
-                            if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                                 && (currentSpace == destination && (
-                                                                    this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
-                                                                    && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
+                                                                    this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                                                                    && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
                                 )
                                 return ILLEGAL_MOVE;
-                            else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                                 && (currentSpace != destination))
                                 return ILLEGAL_MOVE;
                             else currentSpace += 8;
@@ -982,7 +1086,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                     
                     if (abs(start-destination)==2)
                     {
-                        if (this->theSpaces[start]->currentPiece.hasMoved)
+                        if (this->theSpaces[start]->currentPiece->hasMoved)
                         {
                             return ILLEGAL_MOVE;
                         }
@@ -1007,13 +1111,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         int currentSpace = start - 1;
                         while (currentSpace >= destination)
                         {
-                            if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                                 && (currentSpace == destination && (
-                                                                    this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
-                                                                    && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
+                                                                    this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                                                                    && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
                                 )
                                 return ILLEGAL_MOVE;
-                            else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                                 && (currentSpace != destination))
                                 return ILLEGAL_MOVE;
                             else currentSpace -= 1;
@@ -1028,13 +1132,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         int currentSpace = start + 1;
                         while (currentSpace<=destination)
                         {
-                            if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                                 && (currentSpace == destination && (
-                                                                    this->theSpaces[destination]->currentPiece.myType != Piece::pieceType::empty
-                                                                    && this->theSpaces[start]->currentPiece.myColor == this->theSpaces[destination]->currentPiece.myColor))
+                                                                    this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                                                                    && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
                                 )
                                 return ILLEGAL_MOVE;
-                            else if (this->theSpaces[currentSpace]->currentPiece.myType != Piece::pieceType::empty
+                            else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                                 && (currentSpace != destination))
                                 return ILLEGAL_MOVE;
                             else currentSpace += 1;
@@ -1047,7 +1151,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                 // if he's moving diagonally, checks for non-empty spaces
                 
                 else if ((((destination - start) % 7 == 0) || ((destination - start) % 9 == 0))
-                         && (this->theSpaces[destination]->currentPiece.myColor != this->theSpaces[start]->currentPiece.myColor))
+                         && (this->theSpaces[destination]->currentPiece->myColor != this->theSpaces[start]->currentPiece->myColor))
                 {
                     int currentSpace = start;
                     while (currentSpace<NUM_SPACES && currentSpace>=0)
@@ -1069,13 +1173,13 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                             else currentSpace-=9;
                         }
                         
-                        if (currentSpace!=destination && this->theSpaces[currentSpace]->currentPiece.myType!=Piece::pieceType::empty)
+                        if (currentSpace!=destination && this->theSpaces[currentSpace]->currentPiece->myType!=Piece::pieceType::empty)
                         {
                             // if it's trying to cross over a non-empty space
                             return ILLEGAL_MOVE;
                         }
                         
-                        if (this->theSpaces[currentSpace]->currentPiece.myColor == this->theSpaces[start]->currentPiece.myColor) return ILLEGAL_MOVE;
+                        if (this->theSpaces[currentSpace]->currentPiece->myColor == this->theSpaces[start]->currentPiece->myColor) return ILLEGAL_MOVE;
                         
                         if (currentSpace == destination)
                         {
@@ -1113,47 +1217,6 @@ ChessBoard::Piece::color ChessBoard::Board::WhoseMove()
 
 void ChessBoard::Board::StartGame()
 {
-    this->theSpaces[0]->currentPiece = *(new Piece(Piece::pieceType::rook, Piece::color::orange));
-    this->theSpaces[1]->currentPiece= *(new Piece(Piece::pieceType::knight, Piece::color::orange));
-    this->theSpaces[2]->currentPiece= *(new Piece(Piece::pieceType::bishop, Piece::color::orange));
-    this->theSpaces[3]->currentPiece= *(new Piece(Piece::pieceType::queen, Piece::color::orange));
-    this->theSpaces[4]->currentPiece= *(new Piece(Piece::pieceType::king, Piece::color::orange));
-    this->theSpaces[5]->currentPiece= *(new Piece(Piece::pieceType::bishop, Piece::color::orange));
-    this->theSpaces[6]->currentPiece= *(new Piece(Piece::pieceType::knight, Piece::color::orange));
-    this->theSpaces[7]->currentPiece= *(new Piece(Piece::pieceType::rook, Piece::color::orange));
-    this->theSpaces[8]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
-    this->theSpaces[9]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
-    this->theSpaces[10]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
-    this->theSpaces[11]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
-    this->theSpaces[12]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
-    this->theSpaces[13]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
-    this->theSpaces[14]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
-    this->theSpaces[15]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::orange));
-
-    for (size_t i=16;i<48;++i)
-    {
-        this->theSpaces[i]->currentPiece= *(new Piece(Piece::pieceType::empty, Piece::color::none));
-    }
-    
-    
-    this->theSpaces[48]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
-    this->theSpaces[49]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
-    this->theSpaces[50]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
-    this->theSpaces[51]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
-    this->theSpaces[52]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
-    this->theSpaces[53]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
-    this->theSpaces[54]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
-    this->theSpaces[55]->currentPiece= *(new Piece(Piece::pieceType::pawn, Piece::color::purple));
-    this->theSpaces[56]->currentPiece= *(new Piece(Piece::pieceType::rook, Piece::color::purple));
-    this->theSpaces[57]->currentPiece= *(new Piece(Piece::pieceType::knight, Piece::color::purple));
-    this->theSpaces[58]->currentPiece= *(new Piece(Piece::pieceType::bishop, Piece::color::purple));
-    this->theSpaces[59]->currentPiece= *(new Piece(Piece::pieceType::queen, Piece::color::purple));
-    this->theSpaces[60]->currentPiece= *(new Piece(Piece::pieceType::king, Piece::color::purple));
-    this->theSpaces[61]->currentPiece= *(new Piece(Piece::pieceType::bishop, Piece::color::purple));
-    this->theSpaces[62]->currentPiece= *(new Piece(Piece::pieceType::knight, Piece::color::purple));
-    this->theSpaces[63]->currentPiece= *(new Piece(Piece::pieceType::rook, Piece::color::purple));
-
 	this->whoseMove = Piece::color::orange;
-
 }
 

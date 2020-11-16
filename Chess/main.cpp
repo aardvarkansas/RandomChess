@@ -14,6 +14,7 @@
 #include <stdexcept>
 #include "player.h"
 #include "game.h"
+#include "board.h"
 
 bool ClearBuffer(char *input)
 {
@@ -31,6 +32,18 @@ bool ClearBuffer(char *input)
 	return true;
 }
 
+int test_main(int argc, const char* argv[])
+{
+    
+        ChessBoard::Board* myBoard = new ChessBoard::Board();
+        myBoard->StartGame();
+        myBoard->PrintBoard();
+        myBoard->Move(11, 18);
+        
+        delete myBoard;
+    
+    return 0;
+}
 int main(int argc, const char * argv[])
 {
     
@@ -50,7 +63,7 @@ int main(int argc, const char * argv[])
 	char *token1;
 
     Player* myPlayer_orange = new Player(ChessBoard::Piece::color::orange, false);
-    Player* myPlayer_purple = new Player(ChessBoard::Piece::color::purple, true);
+    Player* myPlayer_purple = new Player(ChessBoard::Piece::color::purple, false);
 
 	
 	while (1==1)

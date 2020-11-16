@@ -44,12 +44,12 @@ namespace ChessBoard
     {
     public:
         bool hasMoved = false; // indicates whether the piece has moved already in the game.
-        enum color {
+        enum class color {
             none = 0,
             purple = 1,
             orange = 2,
         };
-        enum pieceType {
+        enum class pieceType {
             empty = 0,
             pawn = 1,
             bishop = 2,
@@ -96,9 +96,9 @@ namespace ChessBoard
         Space & operator= (const Space &mySpace);
 
         //Space & operator= (const Space &&mySpace);
-        Piece currentPiece;
+        Piece *currentPiece = new Piece();
         
-        int spaceID;
+        short spaceID=-1;
         
     };
     
@@ -121,10 +121,10 @@ namespace ChessBoard
         std::string PurpleOrOrange(const int spaceID);
 		Piece::color WhoseMove();
         bool Move(const int start, const int destination);
-        bool IsInCheck(Piece::color king_color, Board* changedState);
+        bool IsInCheck(Piece::color king_color, ChessBoard::Board &changedState);
 		bool IsSameTeam(int start, int destination);
 		int ValidateMove(const int start, const int destination);
-        Board& proposeChange(Board &changedState, const int start, const int destination);
+        ChessBoard::Board& proposeChange(ChessBoard::Board &changedState, const int start, const int destination);
 
 		// to do typedef and make a return value for validate move
 		inline enum moveErrorCodes {

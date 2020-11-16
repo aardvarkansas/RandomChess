@@ -13,7 +13,7 @@ Player::Player()
 
 Player::Player(ChessBoard::Piece::color myColor, bool isHuman)
 {
-	this->color = myColor;
+	this->myColor = myColor;
 	this->isHuman = isHuman;
 }
 
@@ -72,7 +72,7 @@ bool Player::GetRandomMove(char *input, ChessBoard::Board &gameBoard, int seed)
 
 	for (int i = 0; i < 64 ; i++)
 	{
-		if (gameBoard.theSpaces[i]->currentPiece.myColor == this->color)
+		if (gameBoard.theSpaces[i]->currentPiece->myColor == this->myColor)
 		{
 			list_source.push_back(i);
 		}
