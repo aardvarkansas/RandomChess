@@ -476,6 +476,47 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                     
                 case (ChessBoard::Piece::pieceType::bishop):
                 {
+                    // get the minimum value of the spaces
+                    auto min_space = std::min(i, kingSpaceId);
+                    auto max_space = std::max(i, kingSpaceId);
+
+                    bool is_occluded = false;
+
+                    // find out if the bishop is on a diagonal vector with the opposing king
+                    if ((i - kingSpaceId) % 7 == 0)
+                    {
+                        // check to see if there are any pieces in between
+                        for (min_space += 7; min_space < max_space; min_space += 7)
+                        {
+                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
+                            {
+                                is_occluded = true;
+                                break;
+                            }
+                        }
+
+                        // if there's nothing between the bishop and opposing king
+                        if (is_occluded == false)
+                        {
+                            is_in_check = true;
+                        }
+                    }
+                    if ((i - kingSpaceId) % 9 == 0)
+                    {
+                        // check to see if there are any pieces in between
+                        for (min_space += 9; min_space < max_space; min_space += 9)
+                        {
+                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
+                            {
+                                is_occluded = true;
+                                break;
+                            }
+                        }
+                        if (is_occluded == false)
+                        {
+                            is_in_check = true;
+                        }
+                    }
                     std::cout << "\n\nbishop!\n\n\n";
                     break;
                 }
@@ -498,6 +539,48 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                     
                 case (ChessBoard::Piece::pieceType::rook):
                 {
+                    // get the minimum value of the spaces
+                    auto min_space = std::min(i, kingSpaceId);
+                    auto max_space = std::max(i, kingSpaceId);
+
+                    bool is_occluded = false;
+
+                    // if the queen is on the vertical path to the opposing king
+                    if ((i - kingSpaceId) % 8 == 0)
+                    {
+                        // check to see if there are any pieces in between
+                        for (min_space += 8; min_space < max_space; min_space += 8)
+                        {
+                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
+                            {
+                                is_occluded = true;
+                                break;
+                            }
+                        }
+                        if (is_occluded == false)
+                        {
+                            is_in_check = true;
+                        }
+                    }
+
+                    // are they in the same row?
+                    if (floor(i / 8) == floor(kingSpaceId / 8))
+                    {
+                        // check to see if there are any pieces in between
+                        for (min_space += 1; min_space < max_space; min_space++)
+                        {
+                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
+                            {
+                                is_occluded = true;
+                                break;
+                            }
+                        }
+                        if (is_occluded == false)
+                        {
+                            is_in_check = true;
+                        }
+
+                    }
                     std::cout << "\n\nrook!\n\n\n";
                     break;
                 }
@@ -562,6 +645,25 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                         {
                             is_in_check = true;
                         }
+                    }
+
+                    // are they in the same row?
+                    if (floor(i / 8) == floor(kingSpaceId / 8))
+                    {
+                        // check to see if there are any pieces in between
+                        for (min_space += 1; min_space < max_space; min_space++)
+                        {
+                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
+                            {
+                                is_occluded = true;
+                                break;
+                            }
+                        }
+                        if (is_occluded == false)
+                        {
+                            is_in_check = true;
+                        }
+
                     }
 
                     std::cout << "\n\nqueen!\n\n\n";
@@ -955,6 +1057,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
+                        else if (currentSpace == destination) return SUCCESS;
                         else currentSpace -= 8;
 
                     }
@@ -973,6 +1076,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
+                        else if (currentSpace == destination) return SUCCESS;
                         else currentSpace += 8;
 
                     }
@@ -997,6 +1101,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
+                        else if (currentSpace == destination) return SUCCESS;
                         else currentSpace -= 1;
                     }
                 }
@@ -1015,6 +1120,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
+                        else if (currentSpace == destination) return SUCCESS;
                         else currentSpace += 1;
 
 
