@@ -90,7 +90,7 @@ int main(int argc, const char * argv[])
 			// this is a flag made necessary because calling continue in the nested if statement below
 			// doesn't continue the while statement above, and causes an assert fail for the string 
 			// processing of the move numbers from std input
-			bool continue_flag = false;
+			/*bool continue_flag = false;
 
 			
 
@@ -99,7 +99,7 @@ int main(int argc, const char * argv[])
 			{
 				ClearBuffer(input);
 				continue;
-			}
+			}*/
 
 
 			try

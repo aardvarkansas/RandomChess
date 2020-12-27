@@ -7,6 +7,7 @@
 //
 
 #include "board.h"
+#include <algorithm>
 #include <iomanip>
 #include <string>
 #include <locale>
@@ -182,7 +183,7 @@ ChessBoard::Board::Board()
         if (i%8 != 0) newLine = ' ';
         std::cout <<  newLine << std::setw(4) << theSpaces[i]->spaceID;
     }
-    
+
     std::cout <<  std::endl;
 
 
@@ -260,6 +261,17 @@ ChessBoard::Board::Board()
 	this->theSpaces[63]->currentPiece->myType = Piece::pieceType::rook;
 
 }
+
+short getRow(size_t theSpace)
+{
+    return (std::floor(theSpace / 8));
+}
+
+short getColumn(size_t theSpace)
+{
+    return (theSpace % 8);
+}
+
 
 ChessBoard::Board::~Board()
 {
@@ -373,10 +385,40 @@ std::string ChessBoard::Board::GetPieceName(Piece::pieceType thePiece)
 
 bool ChessBoard::Board::Move(const int start, const int destination)
 {
+    std::string startString, destinationString;
+    if (start < 10)
+    {
+        startString = "0" + std::to_string(start);
+    }
+    else
+    {
+        startString = std::to_string(start);
+    }
+    
+    if (destination < 10)
+    {
+        destinationString = "0" + std::to_string(destination);
+    }
+    else
+    {
+        destinationString = std::to_string(destination);
+    }
+
+    auto moveKey = startString + destinationString;
+
+    if (this->movesAttempted[moveKey] > 0)
+    {
+        // Return the cached value, no need to go further
+        return this->movesAttempted[moveKey];
+    }
+   
 	int returnCode = ValidateMove(start, destination);
 
     if (returnCode == SUCCESS)
     {
+        // clear the per-move buffer of moves attempted
+        movesAttempted.clear();
+
         std::cout << std::endl << std::to_string((int)this->theSpaces[destination]->currentPiece->myType) << std::setw(8) << std::to_string((int)this->theSpaces[destination]->currentPiece->myColor);
 
         std::string capturedPieceString = "";
@@ -404,7 +446,10 @@ bool ChessBoard::Board::Move(const int start, const int destination)
     
 	else
     {
-		std::string errorMessage;
+        // Add the move to the hash table for this player's turn
+        movesAttempted[moveKey] = returnCode;
+		
+        std::string errorMessage;
 		
 		switch (returnCode)
 		{
@@ -420,6 +465,8 @@ bool ChessBoard::Board::Move(const int start, const int destination)
                 break;
 		}
 		std::cout << "\n\nBAD MOVE, PUNK: " << errorMessage << "\n\n";
+
+
         return false;
 
     }
@@ -453,10 +500,10 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                     if (changedState.theSpaces[i]->currentPiece->myColor == Piece::color::orange
                         && changedState.theSpaces[kingSpaceId]->currentPiece->myColor != Piece::color::orange)
                     { 
-                        std::cout << "\n\norange pawn!\n\n\n";
+                        // std::cout << "\n\norange pawn!\n\n\n";
                         if (i - 7 == kingSpaceId || i - 9 == kingSpaceId)
                         {
-                            std::cout << "\n\nKing is in check\n\n";
+                            // std::cout << "\n\nKing is in check\n\n";
                             is_in_check = true;
                         }
 
@@ -465,10 +512,10 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                     {
                         if (i + 7 == kingSpaceId || i + 9 == kingSpaceId)
                         {
-                            std::cout << "\n\nKing is in check\n\n";
+                            // std::cout << "\n\nKing is in check\n\n";
                             is_in_check = true;
                         }
-                        std::cout << "\n\npurple pawn!\n\n\n";
+                        // std::cout << "\n\npurple pawn!\n\n\n";
                     }
                      
                     break;
@@ -483,7 +530,14 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                     bool is_occluded = false;
 
                     // find out if the bishop is on a diagonal vector with the opposing king
-                    if ((i - kingSpaceId) % 7 == 0)
+                    if ((i - kingSpaceId) % 7 == 0 && 
+                            (
+                                // This could probably be more precise, like check to see if the bishop / king's row/columns are exact.
+                                i > kingSpaceId && (getColumn(i) < getColumn(kingSpaceId))
+                                ||
+                                i < kingSpaceId && (getColumn(i) > getColumn(kingSpaceId))
+                            )
+                        )
                     {
                         // check to see if there are any pieces in between
                         for (min_space += 7; min_space < max_space; min_space += 7)
@@ -501,7 +555,14 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                             is_in_check = true;
                         }
                     }
-                    if ((i - kingSpaceId) % 9 == 0)
+                    if ((i - kingSpaceId) % 9 == 0 &&
+                        (
+                            // This could probably be more precise, like check to see if the bishop / king's row/columns are exact.
+                            i > kingSpaceId && (getColumn(i) > getColumn(kingSpaceId))
+                            ||
+                            i < kingSpaceId && (getColumn(i) < getColumn(kingSpaceId))
+                            )
+                        )
                     {
                         // check to see if there are any pieces in between
                         for (min_space += 9; min_space < max_space; min_space += 9)
@@ -517,13 +578,13 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                             is_in_check = true;
                         }
                     }
-                    std::cout << "\n\nbishop!\n\n\n";
+                    // std::cout << "\n\nbishop!\n\n\n";
                     break;
                 }
                     
                 case (ChessBoard::Piece::pieceType::knight):
                 {
-                    std::cout << "\n\nknight!\n\n\n";
+                    // std::cout << "\n\nknight!\n\n\n";
 
                     Space lSpaces[8];
                     this->theSpaces[i]->GetLSpaces(lSpaces);
@@ -581,7 +642,7 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                         }
 
                     }
-                    std::cout << "\n\nrook!\n\n\n";
+                    // std::cout << "\n\nrook!\n\n\n";
                     break;
                 }
                     
@@ -595,7 +656,14 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
 
                     // find out if the queen is on a vector with the king
                      // if the queen is on a diagonal path to the opposing king
-                    if ((i - kingSpaceId) % 7 == 0)
+                    if ((i - kingSpaceId) % 7 == 0 &&
+                        (
+                            // This could probably be more precise, like check to see if the bishop / king's row/columns are exact.
+                            i > kingSpaceId && (getColumn(i) < getColumn(kingSpaceId))
+                            ||
+                            i < kingSpaceId && (getColumn(i) > getColumn(kingSpaceId))
+                            )
+                        )
                     {
                         // check to see if there are any pieces in between
                         for (min_space += 7; min_space < max_space; min_space += 7)
@@ -613,7 +681,14 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                             is_in_check = true;
                         }
                     }
-                    if ((i - kingSpaceId) % 9 == 0)
+                    if ((i - kingSpaceId) % 9 == 0 &&
+                        (
+                            // This could probably be more precise, like check to see if the bishop / king's row/columns are exact.
+                            i > kingSpaceId && (getColumn(i) > getColumn(kingSpaceId))
+                            ||
+                            i < kingSpaceId && (getColumn(i) < getColumn(kingSpaceId))
+                            )
+                        )
                     {
                         // check to see if there are any pieces in between
                         for (min_space += 9; min_space < max_space; min_space += 9)
@@ -666,19 +741,19 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
 
                     }
 
-                    std::cout << "\n\nqueen!\n\n\n";
+                    // std::cout << "\n\nqueen!\n\n\n";
                     break;
                 }
                 case (ChessBoard::Piece::pieceType::king):
                 {
-                    std::cout << "\n\nking!\n\n\n";
+                    // std::cout << "\n\nking!\n\n\n";
                     break;
                 }
             }
         }
         if (is_in_check == true)
         {
-            std::cout << "\n\n!!!king in check!!!!\n\n\n";
+            // std::cout << "\n\n!!!king in check!!!!\n\n\n";
             return true;
         }
     }

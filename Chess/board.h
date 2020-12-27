@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
 #define NUM_SPACES 64
 
@@ -107,6 +108,8 @@ namespace ChessBoard
 
 	private:
 		Piece::color whoseMove = Piece::color::purple;
+
+        std::unordered_map<std::string, int> movesAttempted;
     public:
         Space* theSpaces[64];
 
