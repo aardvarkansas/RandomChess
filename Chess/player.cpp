@@ -2,6 +2,7 @@
 #include "board.h"
 #include <ctime>
 
+#include <deque>
 #include <random>
 #include <vector>
 #include <iostream>
@@ -39,9 +40,26 @@ bool ConfirmQuit()
 }
 
 // If this returns false, that means the player has quit.
-bool Player::GetNextMove(char input[32], ChessBoard::Board &gameBoard)
+bool Player::GetNextMove(char input[32], ChessBoard::Board &gameBoard, std::deque<std::pair<short, short>> &movesFromFile)
 {
-	if (this->isHuman)
+	if (!movesFromFile.empty())
+	{
+		for (int i = 0; i < sizeof(input) / sizeof(char); i++)
+			input[i] = '\0';
+		char space[] = { " " };
+		char origin_char[3] = { '  ' };
+		char destination_char[3] = { '  ' };
+		_itoa_s(movesFromFile.front().first, origin_char, 10);
+		_itoa_s(movesFromFile.front().second, destination_char, 10);
+		movesFromFile.pop_front();
+
+		char my_input[7];
+		strcpy_s(my_input, sizeof(origin_char), origin_char);
+		strncat_s(my_input, space, sizeof(space));
+		strncat_s(my_input, destination_char, 3);
+		strcat_s(input, 32, my_input);
+	}
+	else if (this->isHuman)
 	{
 		std::cout << std::endl << "Enter your move: ";
 		std::cin.clear();
@@ -69,6 +87,8 @@ bool Player::GetRandomMove(char *input, ChessBoard::Board &gameBoard, int seed)
 {
 	std::vector<int> list_source(0);
 	std::vector<int> list_destination(0);
+
+	std::deque myQueue = gameBoard.getPossibleMoves();
 
 	for (int i = 0; i < 64 ; i++)
 	{

@@ -8,6 +8,7 @@
 
 #include "board.h"
 #include <algorithm>
+#include <deque>
 #include <iomanip>
 #include <string>
 #include <locale>
@@ -463,6 +464,8 @@ bool ChessBoard::Board::Move(const int start, const int destination)
 				break;
             case moveErrorCodes::MOVING_INTO_CHECK: errorMessage = "King is in check my friend. Please don't try that again.";
                 break;
+            case moveErrorCodes::CANT_TAKE_KING: errorMessage = "You can't take the king, my friend.";
+                break;
 		}
 		std::cout << "\n\nBAD MOVE, PUNK: " << errorMessage << "\n\n";
 
@@ -498,19 +501,19 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                 case (ChessBoard::Piece::pieceType::pawn):
                 {
                     if (changedState.theSpaces[i]->currentPiece->myColor == Piece::color::orange
-                        && changedState.theSpaces[kingSpaceId]->currentPiece->myColor != Piece::color::orange)
+                        && changedState.theSpaces[kingSpaceId]->currentPiece->myColor == Piece::color::purple)
                     { 
                         // std::cout << "\n\norange pawn!\n\n\n";
-                        if (i - 7 == kingSpaceId || i - 9 == kingSpaceId)
+                        if (i + 7 == kingSpaceId || i + 9 == kingSpaceId)
                         {
                             // std::cout << "\n\nKing is in check\n\n";
                             is_in_check = true;
                         }
-
                     }
-                    else if (changedState.theSpaces[kingSpaceId]->currentPiece->myColor == Piece::color::orange)
+                    else if (changedState.theSpaces[i]->currentPiece->myColor == Piece::color::purple &&
+                        changedState.theSpaces[kingSpaceId]->currentPiece->myColor == Piece::color::orange)
                     {
-                        if (i + 7 == kingSpaceId || i + 9 == kingSpaceId)
+                        if (i - 7 == kingSpaceId || i - 9 == kingSpaceId)
                         {
                             // std::cout << "\n\nKing is in check\n\n";
                             is_in_check = true;
@@ -762,8 +765,8 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
 
 bool ChessBoard::Board::IsSameTeam(int start, int destination)
 {
-	if (this->theSpaces[destination]->currentPiece->myColor == this->theSpaces[start]->currentPiece->myColor) return false;
-	else return true;
+	if (this->theSpaces[destination]->currentPiece->myColor == this->theSpaces[start]->currentPiece->myColor) return true;
+	else return false;
 }
 
 ChessBoard::Board& ChessBoard::Board::proposeChange(ChessBoard::Board &changedState, const int start, const int destination)
@@ -779,6 +782,209 @@ ChessBoard::Board& ChessBoard::Board::proposeChange(ChessBoard::Board &changedSt
 
     return changedState;
 }
+
+std::deque<std::pair<short, short>>& ChessBoard::Board::getPossibleMoves()
+{
+    std::vector<int> list_origin(0);
+    std::vector<int> list_destination(0);
+
+    // store all the possible moves -- note, these are not validated in this function
+    std::deque<std::pair<short, short>>& moveQueue = *(new std::deque<std::pair<short, short>>());
+
+    for (int i = 0; i < 64; i++)
+    {
+        if (this->theSpaces[i]->currentPiece->myColor == this->whoseMove)
+        {
+            list_origin.push_back(i);
+        }
+
+        // TO DO: Check for castling, and if it's still legal, add one or two options for castling 
+        /* To check for castling:
+            1. No pieces between king and rook.
+            2. Neither king nor rook has moved yet.
+            3. King will not move out of, through, or into check.
+        */
+    }
+
+    for (auto &elem : list_origin)
+    {
+        auto theOrigin = (short)elem;
+        switch (this->theSpaces[theOrigin]->currentPiece->myType)
+        {
+            case (Piece::pieceType::pawn):
+            {
+                // if it's a purple pawn
+
+                if (this->theSpaces[theOrigin]->currentPiece->myColor == Piece::color::purple)
+                {
+                    if (this->theSpaces[theOrigin]->currentPiece->hasMoved == false
+                        && this->theSpaces[theOrigin - 16]->currentPiece->myType == Piece::pieceType::empty)
+                        moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin - 16));
+
+                    if (this->theSpaces[theOrigin - 8]->currentPiece->myType == Piece::pieceType::empty)
+                    {
+                        moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin - 8));
+                    }
+                    if (this->theSpaces[theOrigin - 7]->currentPiece->myColor == Piece::color::orange
+                        && this->theSpaces[theOrigin - 7]->currentPiece->myType != Piece::pieceType::king)
+                    {
+                        moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin - 7));
+                    }
+                    if (this->theSpaces[theOrigin - 9]->currentPiece->myColor == Piece::color::orange
+                        && this->theSpaces[theOrigin - 9]->currentPiece->myType != Piece::pieceType::king)
+                    {
+                        moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin - 9));
+                    }
+                }
+                //then it's an orange pawn
+                else
+                {
+                    if (this->theSpaces[theOrigin]->currentPiece->hasMoved == false
+                        && this->theSpaces[theOrigin + 16]->currentPiece->myType == Piece::pieceType::empty)
+                        moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin + 16));
+
+                    if (this->theSpaces[theOrigin + 8]->currentPiece->myType == Piece::pieceType::empty)
+                    {
+                        moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin + 8));
+                    }
+                    if (this->theSpaces[theOrigin + 7]->currentPiece->myColor == Piece::color::purple
+                        && this->theSpaces[theOrigin + 7]->currentPiece->myType != Piece::pieceType::king)
+                    {
+                        moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin + 7));
+                    }
+                    if (this->theSpaces[theOrigin + 9]->currentPiece->myColor == Piece::color::purple
+                        && this->theSpaces[theOrigin + 9]->currentPiece->myType != Piece::pieceType::king)
+                    {
+                        moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin + 9));
+                    }
+                } //end else
+                break;
+            }
+
+            case (Piece::pieceType::bishop):
+            {
+                std::vector<short> directionalIncrement = { -7,7,-9,9 };
+
+                std::deque<std::pair<short, short>> newMoves;
+
+                findAvailableMoves(newMoves, directionalIncrement, theOrigin);
+
+                moveQueue.insert(moveQueue.end(), newMoves.begin(), newMoves.end());
+
+                break; // break case
+            }
+
+            case (Piece::pieceType::knight):
+            {
+                Space lSpaces[8];
+                this->theSpaces[theOrigin]->GetLSpaces(lSpaces);
+                for (auto& elem : lSpaces)
+                {
+                    if (elem.spaceID > 0
+                        && !IsSameTeam(theOrigin, elem.spaceID)
+                        )
+                    {
+                        moveQueue.push_back(std::pair<short, short>(theOrigin, elem.spaceID));
+                    }
+                }
+                break; // break case
+            }
+            case (Piece::pieceType::rook):
+            {
+                std::vector<short> directionalIncrement = { -8,8,-1,1 };
+
+                std::deque<std::pair<short, short>> newMoves;
+            
+                findAvailableMoves(newMoves, directionalIncrement, theOrigin);
+
+                moveQueue.insert(moveQueue.end(), newMoves.begin(), newMoves.end());
+            
+                break; // break case
+            }
+
+            case (Piece::pieceType::queen):
+            {
+                std::vector<short> directionalIncrement = { -8,8,-1,1,-7,7,-9,9 };
+
+                std::deque<std::pair<short, short>> newMoves;
+
+                findAvailableMoves(newMoves, directionalIncrement, theOrigin);
+
+                moveQueue.insert(moveQueue.end(), newMoves.begin(), newMoves.end());
+
+                break; // break case
+            }
+            case (Piece::pieceType::king):
+            {
+                std::vector<short> directionalIncrement = { -8,8,-1,1,-7,7,-9,9 };
+
+                std::deque<std::pair<short, short>> newMoves;
+
+                findAvailableMoves(newMoves, directionalIncrement, theOrigin, true);
+
+                moveQueue.insert(moveQueue.end(), newMoves.begin(), newMoves.end());
+
+                break; // break case
+            }
+        }
+    }
+
+    // TO DO: Refactor rook/bishop into a centralized function
+    // use the new function to write the queen's case
+    // add a "surrounding spaces" function and use it for the king -- could possibly leverage the knight's case
+    
+    return moveQueue;
+}
+
+void ChessBoard::Board::findAvailableMoves(
+    std::deque<std::pair<short, short>>& availableMoves,
+    std::vector<short>& directionalIncrement,
+    const short theOrigin, 
+    bool isKing)
+{
+    for (auto& increment : directionalIncrement)
+    {
+        int currentSpace = theOrigin;
+        currentSpace += increment;
+        size_t count = 0; // count for king moves
+
+        while (currentSpace < NUM_SPACES
+            && currentSpace >= 0)
+        {
+            if (isKing == true && count > 0) break;
+            else count++;
+
+            // if you go over the edge of the board
+            if ((increment == 1) && getColumn(theOrigin) > getColumn(currentSpace))
+                break;
+            else if ((increment == -1) && getColumn(theOrigin) < getColumn(currentSpace))
+                break;
+            // if you go over the edge of the board
+            else if ((increment == 9 || increment == -7) && getColumn(theOrigin) > getColumn(currentSpace))
+                break;
+            else if ((increment == -9 || increment == 7) && getColumn(theOrigin) < getColumn(currentSpace))
+                break;
+
+            if (this->theSpaces[currentSpace]->currentPiece->myType == Piece::pieceType::empty)
+            {
+                availableMoves.push_back(std::pair<short, short>(theOrigin, currentSpace));
+            }
+            // if it's an opposing team's piece
+            else if (this->theSpaces[currentSpace]->currentPiece->myColor !=
+                this->theSpaces[theOrigin]->currentPiece->myColor
+                && this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::king)
+            {
+                availableMoves.push_back(std::pair<short, short>(theOrigin, currentSpace));
+                break; // break while loop
+            }
+
+            else break;
+
+            currentSpace += increment;
+        }
+    }
+}
+
 int ChessBoard::Board::ValidateMove(const int start, const int destination)
 {
 	// to do: 
@@ -801,6 +1007,10 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
 	// if it's not the turn of the color of the piece that's being moved.
 	else if (this->theSpaces[start]->currentPiece->myColor != WhoseMove())
 		return WRONG_TEAM;
+
+    // if it's not the turn of the color of the piece that's being moved.
+    else if (this->theSpaces[destination]->currentPiece->myType == Piece::pieceType::king)
+        return CANT_TAKE_KING;
 
     // if the proposed move puts the king in check, invalidate move
     ChessBoard::Board* out_changed_state = new ChessBoard::Board(*this);
@@ -998,7 +1208,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
 
         case (Piece::pieceType::knight):
         {
-			if (!IsSameTeam(start,destination)) return SAME_TEAM;
+			if (IsSameTeam(start,destination)) return SAME_TEAM;
 
             Space lSpaces[8];
             this->theSpaces[start]->GetLSpaces(lSpaces);
@@ -1197,8 +1407,6 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                             return ILLEGAL_MOVE;
                         else if (currentSpace == destination) return SUCCESS;
                         else currentSpace += 1;
-
-
 
                     }
                 }

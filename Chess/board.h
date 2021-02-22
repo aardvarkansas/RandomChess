@@ -11,6 +11,7 @@
 #define __Chess__board__
 
 #include <iostream>
+#include <deque>
 #include <vector>
 #include <unordered_map>
 
@@ -89,6 +90,8 @@ namespace ChessBoard
     public:
         Space();
         ~Space();
+
+        friend class Board;
         
         
         void InitializeAdjacentSpaces();
@@ -126,6 +129,12 @@ namespace ChessBoard
         bool Move(const int start, const int destination);
         bool IsInCheck(Piece::color king_color, ChessBoard::Board &changedState);
 		bool IsSameTeam(int start, int destination);
+        std::deque<std::pair<short, short>>& getPossibleMoves();
+        void findAvailableMoves(
+            std::deque<std::pair<short, short>>& newMoves, 
+            std::vector<short>& directionalIncrement,
+            const short theOrigin,
+            bool isKing = false);
 		int ValidateMove(const int start, const int destination);
         ChessBoard::Board& proposeChange(ChessBoard::Board &changedState, const int start, const int destination);
 
@@ -136,7 +145,8 @@ namespace ChessBoard
 			ILLEGAL_MOVE = 2,
 			SAME_TEAM = 3,
 			EMPTY_SPACE = 4,
-            MOVING_INTO_CHECK =5
+            MOVING_INTO_CHECK =5,
+            CANT_TAKE_KING = 6
 		};
         std::string GetPieceName(Piece::pieceType);
         

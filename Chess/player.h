@@ -1,5 +1,5 @@
 #pragma once
-
+#include <deque>
 #include "board.h"
 
 class Player
@@ -16,7 +16,7 @@ public:
 	char* GetNextMove();
 
 	bool GetRandomMove(char *input, ChessBoard::Board &gameBoard, int seed);
-	bool GetNextMove(char input[32], ChessBoard::Board &gameBoard);
+	bool GetNextMove(char input[32], ChessBoard::Board &gameBoard, std::deque<std::pair<short,short>> &movesFromFile);
 	
 	ChessBoard::Piece::color myColor;
 
