@@ -817,20 +817,20 @@ std::deque<std::pair<short, short>>& ChessBoard::Board::getPossibleMoves()
 
                 if (this->theSpaces[theOrigin]->currentPiece->myColor == Piece::color::purple)
                 {
-                    if (this->theSpaces[theOrigin]->currentPiece->hasMoved == false
+                    if (theOrigin >= 16 && this->theSpaces[theOrigin]->currentPiece->hasMoved == false
                         && this->theSpaces[theOrigin - 16]->currentPiece->myType == Piece::pieceType::empty)
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin - 16));
 
-                    if (this->theSpaces[theOrigin - 8]->currentPiece->myType == Piece::pieceType::empty)
+                    if (theOrigin>=8 && this->theSpaces[theOrigin - 8]->currentPiece->myType == Piece::pieceType::empty)
                     {
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin - 8));
                     }
-                    if (this->theSpaces[theOrigin - 7]->currentPiece->myColor == Piece::color::orange
+                    if (theOrigin >= 7 && this->theSpaces[theOrigin - 7]->currentPiece->myColor == Piece::color::orange
                         && this->theSpaces[theOrigin - 7]->currentPiece->myType != Piece::pieceType::king)
                     {
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin - 7));
                     }
-                    if (this->theSpaces[theOrigin - 9]->currentPiece->myColor == Piece::color::orange
+                    if (theOrigin >= 9 && this->theSpaces[theOrigin - 9]->currentPiece->myColor == Piece::color::orange
                         && this->theSpaces[theOrigin - 9]->currentPiece->myType != Piece::pieceType::king)
                     {
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin - 9));
@@ -839,20 +839,24 @@ std::deque<std::pair<short, short>>& ChessBoard::Board::getPossibleMoves()
                 //then it's an orange pawn
                 else
                 {
-                    if (this->theSpaces[theOrigin]->currentPiece->hasMoved == false
+                    if (theOrigin <= NUM_SPACES-16 
+                        && this->theSpaces[theOrigin]->currentPiece->hasMoved == false
                         && this->theSpaces[theOrigin + 16]->currentPiece->myType == Piece::pieceType::empty)
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin + 16));
 
-                    if (this->theSpaces[theOrigin + 8]->currentPiece->myType == Piece::pieceType::empty)
+                    if (theOrigin <= NUM_SPACES - 8
+                        && this->theSpaces[theOrigin + 8]->currentPiece->myType == Piece::pieceType::empty)
                     {
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin + 8));
                     }
-                    if (this->theSpaces[theOrigin + 7]->currentPiece->myColor == Piece::color::purple
+                    if (theOrigin <= NUM_SPACES - 7 && 
+                        this->theSpaces[theOrigin + 7]->currentPiece->myColor == Piece::color::purple
                         && this->theSpaces[theOrigin + 7]->currentPiece->myType != Piece::pieceType::king)
                     {
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin + 7));
                     }
-                    if (this->theSpaces[theOrigin + 9]->currentPiece->myColor == Piece::color::purple
+                    if (theOrigin <= NUM_SPACES - 9 &&
+                        this->theSpaces[theOrigin + 9]->currentPiece->myColor == Piece::color::purple
                         && this->theSpaces[theOrigin + 9]->currentPiece->myType != Piece::pieceType::king)
                     {
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin + 9));
@@ -878,7 +882,7 @@ std::deque<std::pair<short, short>>& ChessBoard::Board::getPossibleMoves()
             {
                 Space lSpaces[8];
                 this->theSpaces[theOrigin]->GetLSpaces(lSpaces);
-                for (auto& elem : lSpaces)
+                for (auto &elem : lSpaces)
                 {
                     if (elem.spaceID > 0
                         && !IsSameTeam(theOrigin, elem.spaceID)
@@ -929,10 +933,6 @@ std::deque<std::pair<short, short>>& ChessBoard::Board::getPossibleMoves()
         }
     }
 
-    // TO DO: Refactor rook/bishop into a centralized function
-    // use the new function to write the queen's case
-    // add a "surrounding spaces" function and use it for the king -- could possibly leverage the knight's case
-    
     return moveQueue;
 }
 
@@ -946,7 +946,7 @@ void ChessBoard::Board::findAvailableMoves(
     {
         int currentSpace = theOrigin;
         currentSpace += increment;
-        size_t count = 0; // count for king moves
+        size_t count = 0; // count to limit the king piece's potential moves to just one space
 
         while (currentSpace < NUM_SPACES
             && currentSpace >= 0)

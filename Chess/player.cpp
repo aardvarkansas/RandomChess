@@ -88,8 +88,14 @@ bool Player::GetRandomMove(char *input, ChessBoard::Board &gameBoard, int seed)
 	std::vector<int> list_source(0);
 	std::vector<int> list_destination(0);
 
+	
 	std::deque myQueue = gameBoard.getPossibleMoves();
 
+	srand(static_cast<unsigned int>(time(nullptr) / seed));
+
+	std::pair<short, short> nextMove = myQueue.at(rand() % myQueue.size());
+
+	/*
 	for (int i = 0; i < 64 ; i++)
 	{
 		if (gameBoard.theSpaces[i]->currentPiece->myColor == this->myColor)
@@ -102,18 +108,20 @@ bool Player::GetRandomMove(char *input, ChessBoard::Board &gameBoard, int seed)
 			1. No pieces between king and rook.
 			2. Neither king nor rook has moved yet.
 			3. King will not move out of, through, or into check.
-		*/ 
+		
 		else list_destination.push_back(i);
 	}
 	
 	list_destination.shrink_to_fit();
 
-	srand(static_cast<unsigned int>(time(nullptr)/seed));
-	short origin=-1, destination=-1;
 	
 	origin = list_source[(rand() % list_source.size())];
 	destination = list_destination[(rand() % list_destination.size())];
 
+	*/
+	
+	short origin=nextMove.first, destination=nextMove.second;
+	
 	for (int i = 0; i < sizeof(input) / sizeof(char); i++)
 		input[i] = '\0';
 	char space[] = { " " };

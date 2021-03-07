@@ -91,7 +91,7 @@ int main(int argc, const char * argv[])
 	char *token1;
 
     Player* myPlayer_orange = new Player(ChessBoard::Piece::color::orange, false);
-    Player* myPlayer_purple = new Player(ChessBoard::Piece::color::purple, true);
+    Player* myPlayer_purple = new Player(ChessBoard::Piece::color::purple, false);
 
 	
     while (1 == 1)
@@ -202,149 +202,11 @@ int main(int argc, const char * argv[])
             std::cout << "Exception: " << e.what() << std::endl;
             break;
         }
+
+
+        if (myGame.myBoard.theMoves.size() > 99) exit(0);
     }
-
-	/*
     
-    myBoard.Move(9,17);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-    
-    myBoard.Move(62,45);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-    
-    
-    myBoard.Move(8,24);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-     myBoard.Move(51,35);
-    
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-    myBoard.Move(10,26);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-
-    myBoard.Move(35,26);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-    myBoard.Move(17,26);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-
-    myBoard.Move(57,40);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-   
-    
-    myBoard.Move(2,9);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-    
-    myBoard.Move(56,57);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-
-    myBoard.Move(9,16);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-    
-    myBoard.Move(3,17);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-
-    myBoard.Move(60,51);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-    
-    myBoard.Move(4,3);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-
-    myBoard.Move(51,43);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-    myBoard.Move(3,10);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-
-    myBoard.Move(43,34);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-
-    
-    myBoard.Move(10,19);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-    myBoard.Move(34,35);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-    myBoard.Move(19,20);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-    myBoard.Move(35,37);
-    
-    std::cout << "\n\n\n";
-    
-    myBoard.PrintBoard();
-    
-    std::cout << "\n\n\n\n\n";
-    */
 
 	myGame.PrintMoves();
     
