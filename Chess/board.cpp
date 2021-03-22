@@ -413,9 +413,20 @@ bool ChessBoard::Board::Move(const int start, const int destination)
         return this->movesAttempted[moveKey];
     }
    
+    if (IsInCheck(this->whoseMove, *this))
+    {
+        if (IsCheckMate(this->whoseMove, *this))
+        {
+            std::cout << "check mate!";
+            std::cin.get();
+            exit(0);
+        }
+        std::cout << "\n\n Your king is in check!!!\n\n";
+    }
+
 	int returnCode = ValidateMove(start, destination);
 
-    if (returnCode == SUCCESS)
+    if (returnCode == SUCCESS || returnCode == CASTLE)
     {
         // clear the per-move buffer of moves attempted
         movesAttempted.clear();
@@ -427,20 +438,49 @@ bool ChessBoard::Board::Move(const int start, const int destination)
         {
             capturedPieceString = "_x" + PurpleOrOrange(destination);
         }
-        Piece* tempPiece = this->theSpaces[destination]->currentPiece; 
+        Piece* tempPiece = this->theSpaces[destination]->currentPiece;
         tempPiece->myType = Piece::pieceType::empty;
         tempPiece->myColor = Piece::color::none;
         this->theSpaces[destination]->currentPiece = this->theSpaces[start]->currentPiece;
         this->theSpaces[destination]->currentPiece->hasMoved = true;
         this->theSpaces[start]->currentPiece = tempPiece;
-        
-        this->theMoves.push_back(std::to_string(theMoves.size()) + "_" + std::to_string((int)this->theSpaces[destination]->currentPiece->myType) + "_" + std::to_string((int)this->theSpaces[destination]->currentPiece->myColor) + "_" + std::to_string(start)+ "_" + std::to_string(destination) + capturedPieceString);
-        
-		//switch the move to the other color
-		(this->whoseMove == Piece::color::purple) ? this->whoseMove = Piece::color::orange : this->whoseMove = Piece::color::purple;
 
-        if (IsInCheck(this->whoseMove, *this))
-            std::cout << "\n\n Your king is in check!!!\n\n";
+        if (returnCode == CASTLE)
+        {
+            short rook_destination, rook_start;
+            switch (destination)
+            {
+                case 58:
+                    rook_destination = 59;
+                    rook_start = 56;
+                    break;
+                case 62:
+                    rook_destination = 61;
+                    rook_start = 63;
+                    break;
+                case 2:
+                    rook_destination = 3;
+                    rook_start = 0;
+                    break;
+                case 6:
+                    rook_destination = 5;
+                    rook_start = 7;
+                    break;
+            }
+
+            Piece* rook_temp = this->theSpaces[rook_destination]->currentPiece;
+            rook_temp->myType = Piece::pieceType::empty;
+            rook_temp->myColor = Piece::color::none;
+            this->theSpaces[rook_destination]->currentPiece = this->theSpaces[rook_start]->currentPiece;
+            this->theSpaces[rook_destination]->currentPiece->hasMoved = true;
+            this->theSpaces[rook_start]->currentPiece = rook_temp;
+
+        }
+
+        this->theMoves.push_back(std::to_string(theMoves.size()) + "_" + std::to_string((int)this->theSpaces[destination]->currentPiece->myType) + "_" + std::to_string((int)this->theSpaces[destination]->currentPiece->myColor) + "_" + std::to_string(start) + "_" + std::to_string(destination) + capturedPieceString);
+
+        //switch the move to the other color
+        (this->whoseMove == Piece::color::purple) ? this->whoseMove = Piece::color::orange : this->whoseMove = Piece::color::purple;
 
         return true;
     }
@@ -475,7 +515,28 @@ bool ChessBoard::Board::Move(const int start, const int destination)
     }
 }
 
-bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &changedState)
+bool ChessBoard::Board::IsCheckMate(const Piece::color king_color, ChessBoard::Board& changedState)
+{
+    std::deque myQueue = changedState.getPossibleMoves();
+
+    for (std::pair<short, short> nextMove : myQueue)
+    {
+        ChessBoard::Board* out_possible_move_changed_state = new ChessBoard::Board(changedState);
+
+        proposeChange(*out_possible_move_changed_state, nextMove.first, nextMove.second);
+        if (!IsInCheck(this->theSpaces[nextMove.first]->currentPiece->myColor, *out_possible_move_changed_state))
+        {
+            delete out_possible_move_changed_state;
+            return false;
+        }
+
+        delete out_possible_move_changed_state;
+    }
+
+    return true;
+}
+
+bool ChessBoard::Board::IsInCheck(const Piece::color king_color, const ChessBoard::Board &changedState)
 {
     //return false;
     bool is_in_check = false;
@@ -535,17 +596,18 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                     // find out if the bishop is on a diagonal vector with the opposing king
                     if ((i - kingSpaceId) % 7 == 0 && 
                             (
+                                // Check to see if the path wraps around the board, making it invalid
                                 // This could probably be more precise, like check to see if the bishop / king's row/columns are exact.
-                                i > kingSpaceId && (getColumn(i) < getColumn(kingSpaceId))
+                                (i > kingSpaceId && (getColumn(i) < getColumn(kingSpaceId)))
                                 ||
-                                i < kingSpaceId && (getColumn(i) > getColumn(kingSpaceId))
+                                (i < kingSpaceId && (getColumn(i) > getColumn(kingSpaceId)))
                             )
                         )
                     {
                         // check to see if there are any pieces in between
                         for (min_space += 7; min_space < max_space; min_space += 7)
                         {
-                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
+                            if (changedState.theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
                             {
                                 is_occluded = true;
                                 break;
@@ -561,16 +623,16 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                     if ((i - kingSpaceId) % 9 == 0 &&
                         (
                             // This could probably be more precise, like check to see if the bishop / king's row/columns are exact.
-                            i > kingSpaceId && (getColumn(i) > getColumn(kingSpaceId))
+                            (i > kingSpaceId && (getColumn(i) > getColumn(kingSpaceId)))
                             ||
-                            i < kingSpaceId && (getColumn(i) < getColumn(kingSpaceId))
+                            (i < kingSpaceId && (getColumn(i) < getColumn(kingSpaceId)))
                             )
                         )
                     {
                         // check to see if there are any pieces in between
                         for (min_space += 9; min_space < max_space; min_space += 9)
                         {
-                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
+                            if (changedState.theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
                             {
                                 is_occluded = true;
                                 break;
@@ -590,7 +652,7 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                     // std::cout << "\n\nknight!\n\n\n";
 
                     Space lSpaces[8];
-                    this->theSpaces[i]->GetLSpaces(lSpaces);
+                    changedState.theSpaces[i]->GetLSpaces(lSpaces);
                     for (auto i = 0; i < 8; i++)
                     {
                         if (lSpaces[i].spaceID == kingSpaceId)
@@ -609,13 +671,13 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
 
                     bool is_occluded = false;
 
-                    // if the queen is on the vertical path to the opposing king
+                    // if the rook is on the vertical path to the opposing king
                     if ((i - kingSpaceId) % 8 == 0)
                     {
                         // check to see if there are any pieces in between
                         for (min_space += 8; min_space < max_space; min_space += 8)
                         {
-                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
+                            if (changedState.theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
                             {
                                 is_occluded = true;
                                 break;
@@ -633,7 +695,7 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                         // check to see if there are any pieces in between
                         for (min_space += 1; min_space < max_space; min_space++)
                         {
-                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
+                            if (changedState.theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
                             {
                                 is_occluded = true;
                                 break;
@@ -662,16 +724,16 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                     if ((i - kingSpaceId) % 7 == 0 &&
                         (
                             // This could probably be more precise, like check to see if the bishop / king's row/columns are exact.
-                            i > kingSpaceId && (getColumn(i) < getColumn(kingSpaceId))
+                            (i > kingSpaceId && (getColumn(i) < getColumn(kingSpaceId)))
                             ||
-                            i < kingSpaceId && (getColumn(i) > getColumn(kingSpaceId))
+                            (i < kingSpaceId && (getColumn(i) > getColumn(kingSpaceId)))
                             )
                         )
                     {
                         // check to see if there are any pieces in between
                         for (min_space += 7; min_space < max_space; min_space += 7)
                         {
-                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
+                            if (changedState.theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
                             {
                                 is_occluded = true;
                                 break;
@@ -687,16 +749,16 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                     if ((i - kingSpaceId) % 9 == 0 &&
                         (
                             // This could probably be more precise, like check to see if the bishop / king's row/columns are exact.
-                            i > kingSpaceId && (getColumn(i) > getColumn(kingSpaceId))
+                            (i > kingSpaceId && (getColumn(i) > getColumn(kingSpaceId)))
                             ||
-                            i < kingSpaceId && (getColumn(i) < getColumn(kingSpaceId))
+                            (i < kingSpaceId && (getColumn(i) < getColumn(kingSpaceId)))
                             )
                         )
                     {
                         // check to see if there are any pieces in between
                         for (min_space += 9; min_space < max_space; min_space += 9)
                         {
-                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
+                            if (changedState.theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
                             {
                                 is_occluded = true;
                                 break;
@@ -713,7 +775,7 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                         // check to see if there are any pieces in between
                         for (min_space+=8; min_space < max_space; min_space += 8)
                         {
-                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
+                            if (changedState.theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
                             {
                                 is_occluded = true;
                                 break;
@@ -731,7 +793,7 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                         // check to see if there are any pieces in between
                         for (min_space += 1; min_space < max_space; min_space++)
                         {
-                            if (theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
+                            if (changedState.theSpaces[min_space]->currentPiece->myType != Piece::pieceType::empty)
                             {
                                 is_occluded = true;
                                 break;
@@ -749,6 +811,20 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
                 }
                 case (ChessBoard::Piece::pieceType::king):
                 {
+
+                    Space adjacentSpaces[8];
+
+                    // Get the adjacent spaces of the other team's piece (in this case it's the opposing king)
+                    changedState.theSpaces[i]->GetAdjacentSpaces(adjacentSpaces);
+
+                    for (auto j=0;j<8;j++)
+                    {
+                        if (adjacentSpaces[j].spaceID == kingSpaceId)
+                        {
+                            is_in_check = true;
+                        }
+                    }
+
                     // std::cout << "\n\nking!\n\n\n";
                     break;
                 }
@@ -763,24 +839,24 @@ bool ChessBoard::Board::IsInCheck(Piece::color king_color, ChessBoard::Board &ch
     return false;
 }
 
-bool ChessBoard::Board::IsSameTeam(int start, int destination)
+bool ChessBoard::Board::IsSameTeam(const int start, const int destination)
 {
 	if (this->theSpaces[destination]->currentPiece->myColor == this->theSpaces[start]->currentPiece->myColor) return true;
 	else return false;
 }
 
-ChessBoard::Board& ChessBoard::Board::proposeChange(ChessBoard::Board &changedState, const int start, const int destination)
+ChessBoard::Board& ChessBoard::Board::proposeChange(ChessBoard::Board &out_changedState, const int start, const int destination)
 {
 
-    changedState.theSpaces[destination]->currentPiece->myColor = changedState.theSpaces[start]->currentPiece->myColor;
-    changedState.theSpaces[destination]->currentPiece->myType = changedState.theSpaces[start]->currentPiece->myType;
-    changedState.theSpaces[destination]->currentPiece->hasMoved = true;
-    changedState.theSpaces[start]->currentPiece->hasMoved = true;
-    changedState.theSpaces[start]->currentPiece->myColor = Piece::color::none;
-    changedState.theSpaces[start]->currentPiece->myType = Piece::pieceType::empty;
+    out_changedState.theSpaces[destination]->currentPiece->myColor = out_changedState.theSpaces[start]->currentPiece->myColor;
+    out_changedState.theSpaces[destination]->currentPiece->myType = out_changedState.theSpaces[start]->currentPiece->myType;
+    out_changedState.theSpaces[destination]->currentPiece->hasMoved = true;
+    out_changedState.theSpaces[start]->currentPiece->hasMoved = true;
+    out_changedState.theSpaces[start]->currentPiece->myColor = Piece::color::none;
+    out_changedState.theSpaces[start]->currentPiece->myType = Piece::pieceType::empty;
 
 
-    return changedState;
+    return out_changedState;
 }
 
 std::deque<std::pair<short, short>>& ChessBoard::Board::getPossibleMoves()
@@ -790,7 +866,7 @@ std::deque<std::pair<short, short>>& ChessBoard::Board::getPossibleMoves()
 
     // store all the possible moves -- note, these are not validated in this function
     std::deque<std::pair<short, short>>& moveQueue = *(new std::deque<std::pair<short, short>>());
-
+    
     for (int i = 0; i < 64; i++)
     {
         if (this->theSpaces[i]->currentPiece->myColor == this->whoseMove)
@@ -1419,7 +1495,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
             {
                 // if he's going vertically
                 // this if statement checks for non-empty spaces between start and destination
-                if ((start % 8) == (destination%8))
+                if ((start % 8) == (destination % 8))
                 {
                     if (start>destination)
                     {
@@ -1459,10 +1535,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                                 && (currentSpace != destination))
                                 return ILLEGAL_MOVE;
                             else currentSpace += 8;
-                            
                         }
-                        
-                        
                     }
                     return SUCCESS;
                     
@@ -1472,22 +1545,49 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                 else if (floor(start/8)==floor(destination/8))
                 {
                     // TO DO ADD CASTLING CHECK.
-                    
+
                     if (abs(start-destination)==2)
                     {
-                        if (this->theSpaces[start]->currentPiece->hasMoved)
+                        if (this->theSpaces[start]->currentPiece->hasMoved
+                            && this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty)
                         {
                             return ILLEGAL_MOVE;
                         }
                         
-                        else if (start>destination)
-                        {
-                            //for (int i=start;i>getEndOfRow(start
-                        }
-                        
-                        else
-                        {
+                        // First check if he's castling.
+                        if (
+                            ((start == 4 && destination == 6)
+                            || (start == 4 && destination == 2))
                             
+                            || 
+                            
+                            ((start == 60 && destination == 62)
+                            || (start == 60 && destination == 58))
+                            )
+                        {
+
+                            auto loop_interval = (destination > start) ? 1:-1;
+
+                            auto currentSpace = start + loop_interval;
+                            while (currentSpace >= destination)
+                            {
+                                if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty)
+                                    return ILLEGAL_MOVE;
+
+                                ChessBoard::Board* out_possible_move_changed_state = new ChessBoard::Board(*this);
+                                // Need to propose change on current space because king can't move THRU check.
+                                proposeChange(*out_possible_move_changed_state, start, currentSpace);
+                                if (IsInCheck(this->theSpaces[start]->currentPiece->myColor, *out_possible_move_changed_state))
+                                {
+                                    delete out_possible_move_changed_state;
+                                    return MOVING_INTO_CHECK;
+                                }
+                                delete out_possible_move_changed_state;
+                                
+                                currentSpace = currentSpace + loop_interval;
+                            }
+
+                            return CASTLE;
                         }
                     }
                     
@@ -1497,7 +1597,7 @@ int ChessBoard::Board::ValidateMove(const int start, const int destination)
                         // if the king is trying to go more than one space
                         if (start > (destination + 1)) return ILLEGAL_MOVE;
 
-                        int currentSpace = start - 1;
+                        auto currentSpace = start - 1;
                         while (currentSpace >= destination)
                         {
                             if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty

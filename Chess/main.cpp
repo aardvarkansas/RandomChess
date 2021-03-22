@@ -81,7 +81,7 @@ int main(int argc, const char * argv[])
                 "start: " << nextMove.first <<
                 " destination: " << nextMove.second
                 << std::endl;
-            movesFromFile.push_front(nextMove);
+            movesFromFile.push_back(nextMove);
             if (fs.eof()) break;
         }
     }
@@ -90,8 +90,8 @@ int main(int argc, const char * argv[])
 
 	char *token1;
 
-    Player* myPlayer_orange = new Player(ChessBoard::Piece::color::orange, false);
-    Player* myPlayer_purple = new Player(ChessBoard::Piece::color::purple, false);
+    Player* myPlayer_orange = new Player(ChessBoard::Piece::color::orange, true);
+    Player* myPlayer_purple = new Player(ChessBoard::Piece::color::purple, true);
 
 	
     while (1 == 1)
@@ -204,7 +204,7 @@ int main(int argc, const char * argv[])
         }
 
 
-        if (myGame.myBoard.theMoves.size() > 99) exit(0);
+        //if (myGame.myBoard.theMoves.size() > 99) exit(0);
     }
     
 

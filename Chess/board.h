@@ -127,8 +127,9 @@ namespace ChessBoard
         std::string PurpleOrOrange(const int spaceID);
 		Piece::color WhoseMove();
         bool Move(const int start, const int destination);
-        bool IsInCheck(Piece::color king_color, ChessBoard::Board &changedState);
-		bool IsSameTeam(int start, int destination);
+        bool IsInCheck(const Piece::color king_color, const ChessBoard::Board &changedState);
+        bool IsCheckMate(const Piece::color king_color, ChessBoard::Board& changedState);
+		bool IsSameTeam(const int start, const int destination);
         std::deque<std::pair<short, short>>& getPossibleMoves();
         void findAvailableMoves(
             std::deque<std::pair<short, short>>& newMoves, 
@@ -139,14 +140,15 @@ namespace ChessBoard
         ChessBoard::Board& proposeChange(ChessBoard::Board &changedState, const int start, const int destination);
 
 		// to do typedef and make a return value for validate move
-		inline enum moveErrorCodes {
+		enum moveErrorCodes {
 			SUCCESS = 0,
-			WRONG_TEAM = 1,
-			ILLEGAL_MOVE = 2,
-			SAME_TEAM = 3,
-			EMPTY_SPACE = 4,
-            MOVING_INTO_CHECK =5,
-            CANT_TAKE_KING = 6
+            CASTLE = 1,
+			WRONG_TEAM = 2,
+			ILLEGAL_MOVE = 3,
+			SAME_TEAM = 4,
+			EMPTY_SPACE = 5,
+            MOVING_INTO_CHECK =6,
+            CANT_TAKE_KING = 7,
 		};
         std::string GetPieceName(Piece::pieceType);
         
