@@ -13,10 +13,10 @@ public:
 	Player player[2];
 	ChessBoard::Board myBoard;
 
-	void StartGame();
+	void StartGame(ChessBoard::Piece::color startWhoseMove = ChessBoard::Piece::color::orange);
 	void PrintBoard();
 	void PrintMoves();
-	bool Move(const int start, const int destination);
+	ChessBoard::moveErrorCodes Move(const int start, const int destination, ChessBoard::MoveData& outMoveData);
 
 	ChessBoard::Piece::color WhoseMove();
 

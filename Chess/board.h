@@ -40,18 +40,36 @@ namespace ChessBoard
     };*/
     
     
+    // to do typedef and make a return value for validate move
+    enum moveErrorCodes : short {
+        SUCCESS = 0,
+        CASTLE = 1,
+        WRONG_TEAM = 2,
+        ILLEGAL_MOVE = 3,
+        SAME_TEAM = 4,
+        EMPTY_SPACE = 5,
+        CASTLE_OUT_OF_CHECK = 6,
+        MOVING_INTO_CHECK = 7,
+        CANT_TAKE_KING = 8,
+        CHECK_MATE = 9,
+        PAWN_TRADE=10,
+    };
 
+    using MoveData = struct {
+        moveErrorCodes moveStatus;
+        std::vector<std::pair<short, short>> enPassantMoves; 
+    };
     
     class Piece
     {
     public:
         bool hasMoved = false; // indicates whether the piece has moved already in the game.
-        enum class color {
+        enum struct color: short {
             none = 0,
             purple = 1,
             orange = 2,
         };
-        enum class pieceType {
+        enum struct pieceType: short {
             empty = 0,
             pawn = 1,
             bishop = 2,
@@ -73,7 +91,7 @@ namespace ChessBoard
         
     };
 
-    enum spaceRelativePosition
+    enum spaceRelativePosition : short
     {
         up=0,
         upRight=1,
@@ -100,7 +118,7 @@ namespace ChessBoard
         Space & operator= (const Space &mySpace);
 
         //Space & operator= (const Space &&mySpace);
-        Piece *currentPiece = new Piece();
+        Piece *currentPiece;
         
         short spaceID=-1;
         
@@ -110,9 +128,8 @@ namespace ChessBoard
     {
 
 	private:
-		Piece::color whoseMove = Piece::color::purple;
+		Piece::color whoseMove = Piece::color::orange;
 
-        std::unordered_map<std::string, int> movesAttempted;
     public:
         Space* theSpaces[64];
 
@@ -121,35 +138,31 @@ namespace ChessBoard
         Board();
         Board(const Board& rhs);
         ~Board();
-        void StartGame();
+        void StartGame(Piece::color startWhoseMove = Piece::color::orange);
         void PrintBoard();
         void PrintMoves();
+        void ImportJSON(std::string& in_board_array);
+        void ExportJSON(std::string& out_board_array);
+
+        std::unordered_map<std::string, ChessBoard::moveErrorCodes> movesAttempted;
+
         std::string PurpleOrOrange(const int spaceID);
 		Piece::color WhoseMove();
-        bool Move(const int start, const int destination);
+        moveErrorCodes Move(const short start, const short destination, MoveData& outMoveData,
+            const Piece::pieceType pawn_trade_piece = Piece::pieceType::queen);
         bool IsInCheck(const Piece::color king_color, const ChessBoard::Board &changedState);
         bool IsCheckMate(const Piece::color king_color, ChessBoard::Board& changedState);
 		bool IsSameTeam(const int start, const int destination);
-        std::deque<std::pair<short, short>>& getPossibleMoves();
+        void getPossibleMoves(std::deque<std::pair<short, short>>& moveQueue);
         void findAvailableMoves(
             std::deque<std::pair<short, short>>& newMoves, 
             std::vector<short>& directionalIncrement,
             const short theOrigin,
             bool isKing = false);
-		int ValidateMove(const int start, const int destination);
+        ChessBoard::moveErrorCodes ValidateMove(const int start, const int destination, MoveData& outMoveData);
         ChessBoard::Board& proposeChange(ChessBoard::Board &changedState, const int start, const int destination);
 
-		// to do typedef and make a return value for validate move
-		enum moveErrorCodes {
-			SUCCESS = 0,
-            CASTLE = 1,
-			WRONG_TEAM = 2,
-			ILLEGAL_MOVE = 3,
-			SAME_TEAM = 4,
-			EMPTY_SPACE = 5,
-            MOVING_INTO_CHECK =6,
-            CANT_TAKE_KING = 7,
-		};
+		
         std::string GetPieceName(Piece::pieceType);
         
         

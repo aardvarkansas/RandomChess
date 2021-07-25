@@ -5,13 +5,13 @@
 //  Created by Me on 1/8/17.
 //  Copyright (c) 2017 User. All rights reserved.
 //
-
+/*
 #include <assert.h>
 #include <bitset>
 #include <deque>
-#include <fstream>
+#include <fstream>*/
 #include <iostream>
-#include <filesystem>
+//#include <filesystem>
 #include <vector>
 #include <regex>
 #include <exception>
@@ -20,6 +20,13 @@
 #include "player.h"
 #include "game.h"
 #include "board.h"
+
+#if _MSC_VER > 1600
+#include <assert.h>
+#include <filesystem>
+#include <fstream>
+#include <unordered_map>
+#endif
 
 bool ClearBuffer(char *input)
 {
@@ -37,26 +44,78 @@ bool ClearBuffer(char *input)
 	return true;
 }
 
-int test_main(int argc, const char* argv[])
+int old_main(int argc, const char* argv[])
 {
-    
-        ChessBoard::Board* myBoard = new ChessBoard::Board();
-        myBoard->StartGame();
-        myBoard->PrintBoard();
-        myBoard->Move(11, 18);
+    if (argc > 1)
+    {
+        Game* myGame = new Game();
+        myGame->StartGame(ChessBoard::Piece::color::purple);
         
-        delete myBoard;
-    
-    return 0;
+        short argOrigin = atoi(argv[1]);
+
+        short argDestination = atoi(argv[2]);
+
+        std::string in_board_array;
+
+        if (argc > 3) in_board_array = argv[3];
+        
+        myGame->myBoard.ImportJSON(in_board_array);
+
+        Player* myPlayer_orange = new Player(ChessBoard::Piece::color::orange, false);
+        Player* myPlayer_purple = new Player(ChessBoard::Piece::color::purple, true);
+        
+        ChessBoard::MoveData outMoveData;
+        ChessBoard::moveErrorCodes ret_value = myGame->myBoard.Move(argOrigin, argDestination, outMoveData);
+
+        std::string out_board_array;
+
+        if (!ret_value == ChessBoard::moveErrorCodes::SUCCESS)
+        {
+            myGame->myBoard.ExportJSON(out_board_array);
+            std::cout << out_board_array;
+
+            std::cerr << "Error: " << ret_value << std::endl;
+            delete myGame;
+            return ret_value;
+        }
+        
+        std::pair<short, short> npc_move;
+        int movesAttempted = 0;
+        do
+        {
+            ChessBoard::MoveData outMoveData;
+            npc_move = myPlayer_orange->GetNextMove(myGame->myBoard);
+            ret_value = myGame->myBoard.Move(npc_move.first, npc_move.second, outMoveData);
+            movesAttempted++;
+        } while (!ret_value == ChessBoard::moveErrorCodes::SUCCESS && movesAttempted<200);
+
+        myGame->myBoard.ExportJSON(out_board_array);
+        out_board_array.append("," + std::to_string(npc_move.first) + "," + std::to_string(npc_move.second));
+        std::cout << out_board_array;
+
+        delete myGame;
+
+        return ret_value;
+    }
+
+    else return -1;
 }
+
+// This main function relies on MSFT libraries.
+#if _MSC_VER > 1600
 int main(int argc, const char * argv[])
 {
+    // C:\temp\chess\moves.txt
+
     Game myGame;
    
     std::cout << "\n";
     
-	myGame.StartGame();
+	myGame.StartGame(ChessBoard::Piece::color::purple);
     
+    
+    myGame.myBoard.ImportJSON(std::string("0,0,0,0,2,3,0,2,2,0,0,0,0,0,0,0,2,2,1,2,5,0,0,0,1,2,4,0,0,0,0,0,0,0,2,1,0,2,1,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,1,2,1,0,0,0,0,0,0,1,0,0,1,1,3,0,0,0,1,2,1,1,2,1,0,0,0,0,0,0,1,0,0,1,1,1,0,0,0,1,2,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,1,0,0,1,1,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,2,6,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,4,0,1,3,0,1,2,0,1,6,0,0,0,0,1,2,1,0,0,0,1,4"));
+
 	myGame.PrintBoard();
 
     // vector of pairs with start and destination
@@ -99,9 +158,9 @@ int main(int argc, const char * argv[])
         try
         {
 
-            char input[sizeof(char) * 32];
+            std::string input;
 
-            ClearBuffer(input);
+            input.clear();
 
             if (myGame.WhoseMove() == ChessBoard::Piece::color::purple)
             {
@@ -135,7 +194,6 @@ int main(int argc, const char * argv[])
             try
             {
                 std::regex pat{ R"(\d\d?)" };
-                char* next_token;
 
                 std::cout << "input: " << input << std::endl;
 
@@ -145,7 +203,7 @@ int main(int argc, const char * argv[])
                     continue;
                 }
 
-                std::string first_input = strtok_s(input, seps.c_str(), &next_token);
+                std::string first_input = input.substr(0,input.find(' '));
                 if (!std::regex_match(first_input, pat))
                 {
                     std::cout << "Bad inpoot.";
@@ -155,7 +213,8 @@ int main(int argc, const char * argv[])
 
                 std::cout << "origin: " << origin << std::endl;
 
-                if (*next_token == '\0' || !std::regex_match(next_token, pat))
+                std::string next_token = input.substr(input.find(' ')+1, input.length());
+                if (next_token[0] == '\0' || !std::regex_match(next_token, pat))
                 {
                     std::cout << "Bad input.";
                     continue;
@@ -166,7 +225,7 @@ int main(int argc, const char * argv[])
                     // the input string
                     try
                     {
-                        destination = atoi(strtok_s(NULL, seps.c_str(), &next_token));
+                        destination = atoi(next_token.c_str());
 
                         std::cout << "destination: " << destination << std::endl;
                     }
@@ -187,9 +246,12 @@ int main(int argc, const char * argv[])
             if (!std::cin.fail())
             {
                 std::cout << std::endl << origin << " " << destination;
-                myGame.Move(origin, destination);
+                ChessBoard::MoveData outMoveData;
+                myGame.Move(origin, destination, outMoveData);
                 myGame.PrintMoves();
                 myGame.PrintBoard();
+                std::string export_board;
+                myGame.myBoard.ExportJSON(export_board);
             }
             else {
                 std::cin.clear();
@@ -213,4 +275,6 @@ int main(int argc, const char * argv[])
     
     return 0;
 }
+
+#endif
 

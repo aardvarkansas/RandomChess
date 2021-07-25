@@ -1,4 +1,5 @@
 #include "game.h"
+#include "board.h"
 
 
 Game::Game()
@@ -18,9 +19,9 @@ ChessBoard::Piece::color Game::WhoseMove()
 }
 
 
-void Game::StartGame()
+void Game::StartGame(ChessBoard::Piece::color startWhoseMove)
 {
-	this->myBoard.StartGame();
+	this->myBoard.StartGame(startWhoseMove);
 }
 
 void Game::PrintBoard()
@@ -31,8 +32,8 @@ void Game::PrintMoves()
 {
 	this->myBoard.PrintMoves();
 }
-bool Game::Move(const int start, const int destination)
+ChessBoard::moveErrorCodes Game::Move(const int start, const int destination, ChessBoard::MoveData& outMoveData)
 {
-	return this->myBoard.Move(start,destination);
+	return this->myBoard.Move(start, destination, outMoveData);
 }
 
