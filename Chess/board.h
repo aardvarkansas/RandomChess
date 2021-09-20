@@ -53,13 +53,10 @@ namespace ChessBoard
         CANT_TAKE_KING = 8,
         CHECK_MATE = 9,
         PAWN_TRADE=10,
+        EN_PASSANT = 11,
+        STALEMATE = 12,
     };
 
-    using MoveData = struct {
-        moveErrorCodes moveStatus;
-        std::vector<std::pair<short, short>> enPassantMoves; 
-    };
-    
     class Piece
     {
     public:
@@ -111,17 +108,21 @@ namespace ChessBoard
 
         friend class Board;
         
-        
-        void InitializeAdjacentSpaces();
-        void GetAdjacentSpaces(Space *theSpaces);
-        void GetLSpaces(Space *theSpaces);
+        void GetAdjacentSpaces(short theSpaces[8]) const;
+        void GetLSpaces(short theLSpaces[8]) const;
         Space & operator= (const Space &mySpace);
 
         //Space & operator= (const Space &&mySpace);
         Piece *currentPiece;
         
-        short spaceID=-1;
-        
+        short spaceID=-1;  
+    };
+
+    using MoveData = struct moveData {
+        moveErrorCodes moveStatus;
+        std::vector<std::pair<short, short>> enPassantMoves;
+        std::vector<short> spacesToDraw;
+        Piece pawnTradePiece;
     };
     
     class Board
@@ -139,31 +140,32 @@ namespace ChessBoard
         Board(const Board& rhs);
         ~Board();
         void StartGame(Piece::color startWhoseMove = Piece::color::orange);
-        void PrintBoard();
-        void PrintMoves();
+        void PrintBoard() const;
+        void PrintMoves() const;
         void ImportJSON(std::string& in_board_array);
-        void ExportJSON(std::string& out_board_array);
+        void ExportJSON(std::string& out_board_array, const MoveData& inMoveData) const;
 
         std::unordered_map<std::string, ChessBoard::moveErrorCodes> movesAttempted;
 
-        std::string PurpleOrOrange(const int spaceID);
-		Piece::color WhoseMove();
-        moveErrorCodes Move(const short start, const short destination, MoveData& outMoveData,
+        std::string PurpleOrOrange(const int spaceID) const;
+		Piece::color WhoseMove() const;
+        moveErrorCodes Move(const short start, const short destination, const MoveData& inMoveData, MoveData& outMoveData,
             const Piece::pieceType pawn_trade_piece = Piece::pieceType::queen);
-        bool IsInCheck(const Piece::color king_color, const ChessBoard::Board &changedState);
-        bool IsCheckMate(const Piece::color king_color, ChessBoard::Board& changedState);
-		bool IsSameTeam(const int start, const int destination);
-        void getPossibleMoves(std::deque<std::pair<short, short>>& moveQueue);
+        bool IsInCheck(const Piece::color king_color, const ChessBoard::Board &changedState) const;
+        bool IsCheckMate(const Piece::color king_color, ChessBoard::Board& changedState, const MoveData& inMoveData) const;
+        bool IsStalemate(const MoveData& inMoveData) const;
+		bool IsSameTeam(const int start, const int destination) const;
+        bool getPossibleMoves(std::deque<std::pair<short, short>>& moveQueue, const MoveData& inMoveData, bool oneMoveOnly = false) const;
         void findAvailableMoves(
             std::deque<std::pair<short, short>>& newMoves, 
             std::vector<short>& directionalIncrement,
             const short theOrigin,
-            bool isKing = false);
-        ChessBoard::moveErrorCodes ValidateMove(const int start, const int destination, MoveData& outMoveData);
-        ChessBoard::Board& proposeChange(ChessBoard::Board &changedState, const int start, const int destination);
+            bool isKing = false) const;
+        ChessBoard::moveErrorCodes ValidateMove(const int start, const int destination, const MoveData& inMoveData, MoveData& outMoveData) const;
+        ChessBoard::Board& proposeChange(ChessBoard::Board &changedState, const int start, const int destination) const;
 
 		
-        std::string GetPieceName(Piece::pieceType);
+        std::string GetPieceName(const Piece::pieceType) const;
         
         
     };

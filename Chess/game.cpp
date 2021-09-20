@@ -32,8 +32,9 @@ void Game::PrintMoves()
 {
 	this->myBoard.PrintMoves();
 }
-ChessBoard::moveErrorCodes Game::Move(const int start, const int destination, ChessBoard::MoveData& outMoveData)
+ChessBoard::moveErrorCodes Game::Move(const int start, const int destination, 
+	const ChessBoard::MoveData& inMoveData, ChessBoard::MoveData& outMoveData)
 {
-	return this->myBoard.Move(start, destination, outMoveData);
+	return this->myBoard.Move(start, destination, inMoveData, outMoveData);
 }
 

@@ -61,35 +61,62 @@ int old_main(int argc, const char* argv[])
         
         myGame->myBoard.ImportJSON(in_board_array);
 
-        Player* myPlayer_orange = new Player(ChessBoard::Piece::color::orange, false);
+        Player* myPlayer_orange = new Player(ChessBoard::Piece::color::orange, true);
         Player* myPlayer_purple = new Player(ChessBoard::Piece::color::purple, true);
         
         ChessBoard::MoveData outMoveData;
-        ChessBoard::moveErrorCodes ret_value = myGame->myBoard.Move(argOrigin, argDestination, outMoveData);
+        ChessBoard::MoveData inMoveData;
+        ChessBoard::moveErrorCodes ret_value = 
+            myGame->myBoard.Move(argOrigin, argDestination, inMoveData, outMoveData);
 
         std::string out_board_array;
+        std::string out_en_passant_moves;
 
         if (!ret_value == ChessBoard::moveErrorCodes::SUCCESS)
         {
-            myGame->myBoard.ExportJSON(out_board_array);
-            std::cout << out_board_array;
+            myGame->myBoard.ExportJSON(out_board_array, inMoveData);
+            short i = 0;
+            std::string comma = "";
+            for (std::pair<short, short>& myEnPassantMove : outMoveData.enPassantMoves)
+            {
+                if (i == 1) comma = ',';
+                out_en_passant_moves += comma + std::to_string(myEnPassantMove.first) 
+                    + ',' + std::to_string(myEnPassantMove.second);
+                i++;
+            }
+            std::cout << out_board_array << " \n\nenPassant: " << out_en_passant_moves;
 
             std::cerr << "Error: " << ret_value << std::endl;
             delete myGame;
             return ret_value;
         }
-        
+
+        // If you get to this point, then the move was successful and it's time to get
+        // an NPC move. Change the out data from the recently completed move from "out"
+        // data to "in" data for the upcoming NPC move.
+
         std::pair<short, short> npc_move;
         int movesAttempted = 0;
+
+        ChessBoard::MoveData npc_outMoveData;
+        ChessBoard::MoveData npc_inMoveData;
+
+        npc_inMoveData.enPassantMoves = outMoveData.enPassantMoves;
+        npc_inMoveData.spacesToDraw = outMoveData.spacesToDraw;
+        inMoveData.enPassantMoves = outMoveData.enPassantMoves;
         do
         {
-            ChessBoard::MoveData outMoveData;
-            npc_move = myPlayer_orange->GetNextMove(myGame->myBoard);
-            ret_value = myGame->myBoard.Move(npc_move.first, npc_move.second, outMoveData);
+            npc_move = myPlayer_orange->GetNextMove(myGame->myBoard, npc_inMoveData);
+            ret_value = myGame->myBoard.Move(
+                npc_move.first, 
+                npc_move.second, 
+                npc_inMoveData, 
+                npc_outMoveData
+            );
             movesAttempted++;
         } while (!ret_value == ChessBoard::moveErrorCodes::SUCCESS && movesAttempted<200);
 
-        myGame->myBoard.ExportJSON(out_board_array);
+        myGame->myBoard.ExportJSON(out_board_array, npc_inMoveData);
         out_board_array.append("," + std::to_string(npc_move.first) + "," + std::to_string(npc_move.second));
         std::cout << out_board_array;
 
@@ -113,12 +140,23 @@ int main(int argc, const char * argv[])
     
 	myGame.StartGame(ChessBoard::Piece::color::purple);
     
+    //myGame.myBoard.ImportJSON(std::string("0,2,4,0,2,3,0,2,2,0,2,6,0,2,5,0,2,2,0,2,3,0,2,4,0,2,1,0,2,1,0,2,1,0,2,1,0,2,1,0,2,1,0,2,1,0,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,4,0,1,3,0,1,2,0,1,6,0,1,5,0,1,2,0,1,3,0,1,4"));
+    // myGame.myBoard.ImportJSON(std::string("0,2,4,0,2,3,0,2,2,0,0,0,0,2,5,0,2,2,0,0,0,0,2,4,0,0,0,0,0,0,0,0,0,0,2,1,0,2,1,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,1,2,1,0,0,0,0,0,0,1,0,0,1,1,3,0,0,0,1,2,1,1,2,1,0,0,0,0,0,0,1,0,0,1,1,1,0,0,0,1,2,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,2,6,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,4,0,1,3,0,1,2,0,1,6,0,1,5,0,1,2,1,0,0,0,1,4"));
+
+    //castling through pawn check
+    // myGame.myBoard.ImportJSON(std::string("0,2,4,0,2,3,0,2,2,0,2,6,0,2,5,0,0,0,0,2,3,0,2,4,0,2,1,0,0,0,0,2,1,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,1,2,1,0,0,0,1,1,1,0,0,0,1,2,1,0,0,0,1,2,1,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,3,0,0,0,1,1,1,1,1,1,0,0,0,1,1,2,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,0,0,0,1,1,6,0,1,1,0,1,1,0,0,0,0,0,0,0,1,1,0,1,4,0,0,0,0,0,0,0,0,0,0,1,5,0,1,2,0,1,3,0,1,4"));
     
-    myGame.myBoard.ImportJSON(std::string("0,0,0,0,2,3,0,2,2,0,0,0,0,0,0,0,2,2,1,2,5,0,0,0,1,2,4,0,0,0,0,0,0,0,2,1,0,2,1,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,1,2,1,0,0,0,0,0,0,1,0,0,1,1,3,0,0,0,1,2,1,1,2,1,0,0,0,0,0,0,1,0,0,1,1,1,0,0,0,1,2,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,1,0,0,1,1,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,2,6,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,4,0,1,3,0,1,2,0,1,6,0,0,0,0,1,2,1,0,0,0,1,4"));
+    // weird stalemate
+    myGame.myBoard.ImportJSON(std::string("0,0,0,0,0,0,0,2,2,0,0,0,0,2,5,1,2,3,0,0,0,0,0,0,0,2,1,0,0,0,0,2,1,0,0,0,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,6,1,2,2,0,0,0,0,0,0,0,0,0,1,2,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"));
+    // stalemate
+//    myGame.myBoard.ImportJSON(std::string("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"));
+//    myGame.myBoard.ImportJSON(std::string("0,2,4,0,0,0,0,2,2,0,0,0,0,0,0,0,0,0,1,0,0,1,2,5,0,2,1,0,0,0,0,2,1,0,0,0,0,0,0,1,1,6,0,0,0,0,0,0,0,0,0,1,2,3,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,1,2,1,0,0,0,1,2,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,1,1,0,0,0,0,0,0,1,2,6,0,1,1,0,1,4,0,1,3,0,1,2,0,0,0,0,1,5,0,1,2,0,0,0,0,0,0,63,54"));
+    //myGame.myBoard.ImportJSON(std::string("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,3,0,0,0,0,0,0,0,0,0,1,1,6,0,0,0,1,1,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,25"));
+    // myGame.myBoard.ImportJSON(std::string("0,0,0,1,0,0,0,0,0,0,0,0,1,2,5,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,2,3,0,0,0,1,0,0,1,1,1,0,0,0,1,0,0,1,1,1,0,0,0,1,1,6,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,1,2,1,2,1,1,1,3,0,0,0,1,1,6,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,4,0,0,0,0,0,0,0,0,0,0,1,5,0,0,0,1,1,4,1,0,0"));
 
 	myGame.PrintBoard();
 
-    // vector of pairs with start and destination
+  // vector of pairs with start and destination
 	std::deque<std::pair<short, short>> movesFromFile;
 
     short origin, destination;
@@ -152,9 +190,12 @@ int main(int argc, const char * argv[])
     Player* myPlayer_orange = new Player(ChessBoard::Piece::color::orange, true);
     Player* myPlayer_purple = new Player(ChessBoard::Piece::color::purple, true);
 
-	
+
+    ChessBoard::MoveData inMoveData;
+
     while (1 == 1)
     {
+        inMoveData.spacesToDraw.clear();
         try
         {
 
@@ -166,14 +207,14 @@ int main(int argc, const char * argv[])
             {
                 if (!movesFromFile.empty())
                 {
-                    myPlayer_purple->GetNextMove(input, myGame.myBoard, movesFromFile);
+                    myPlayer_purple->GetNextMove(input, myGame.myBoard, movesFromFile, inMoveData);
                 }
-                else if (!myPlayer_purple->GetNextMove(input, myGame.myBoard, movesFromFile))
+                else if (!myPlayer_purple->GetNextMove(input, myGame.myBoard, movesFromFile, inMoveData))
                     return 0; // Quit the game if the next move function returns false.
             }
             else
             {
-                if (!myPlayer_orange->GetNextMove(input, myGame.myBoard, movesFromFile))
+                if (!myPlayer_orange->GetNextMove(input, myGame.myBoard, movesFromFile, inMoveData))
                     return 0; // Quit the game if the next move function returns false.
             }
 
@@ -195,7 +236,7 @@ int main(int argc, const char * argv[])
             {
                 std::regex pat{ R"(\d\d?)" };
 
-                std::cout << "input: " << input << std::endl;
+                // std::cout << "input: " << input << std::endl;
 
                 if (input[0] == '\0')
                 {
@@ -211,7 +252,7 @@ int main(int argc, const char * argv[])
                 }
                 origin = atoi(first_input.c_str());
 
-                std::cout << "origin: " << origin << std::endl;
+                std::cout << "\n\norigin: " << origin << std::endl;
 
                 std::string next_token = input.substr(input.find(' ')+1, input.length());
                 if (next_token[0] == '\0' || !std::regex_match(next_token, pat))
@@ -245,13 +286,26 @@ int main(int argc, const char * argv[])
 
             if (!std::cin.fail())
             {
+                std::string out_en_passant_moves;
                 std::cout << std::endl << origin << " " << destination;
                 ChessBoard::MoveData outMoveData;
-                myGame.Move(origin, destination, outMoveData);
+                
+                ChessBoard::moveErrorCodes ret_value = myGame.Move(origin, destination, inMoveData, outMoveData);
+                short i = 0;
+                std::string comma = "";
+                for (std::pair<short, short>& myEnPassantMove : outMoveData.enPassantMoves)
+                {
+                    if (i == 1) comma = ',';
+                    out_en_passant_moves += comma + std::to_string(myEnPassantMove.first) 
+                        + ',' + std::to_string(myEnPassantMove.second);
+                    i++;
+                }
+                // std::cout << "\n\nenPassant: " << out_en_passant_moves;
                 myGame.PrintMoves();
                 myGame.PrintBoard();
                 std::string export_board;
-                myGame.myBoard.ExportJSON(export_board);
+                myGame.myBoard.ExportJSON(export_board, outMoveData);
+                inMoveData = outMoveData;
             }
             else {
                 std::cin.clear();

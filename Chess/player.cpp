@@ -41,15 +41,16 @@ bool ConfirmQuit()
 
 }
 
-std::pair<short, short> Player::GetNextMove(ChessBoard::Board &myBoard)
+std::pair<short, short> Player::GetNextMove(ChessBoard::Board &myBoard, const ChessBoard::MoveData& inMoveData)
 {
 	char input[32];
 	srand(static_cast<unsigned int>(time(nullptr)));
 	seed_for_random_move++;
-	return GetRandomMove(myBoard, seed_for_random_move);
+	return GetRandomMove(myBoard, seed_for_random_move, inMoveData);
 }
 // If this returns false, that means the player has quit.
-bool Player::GetNextMove(std::string& input, ChessBoard::Board &gameBoard, std::deque<std::pair<short, short>> &movesFromFile)
+bool Player::GetNextMove(std::string& input, ChessBoard::Board &gameBoard, std::deque<std::pair<short, short>> &movesFromFile, 
+	const ChessBoard::MoveData& inMoveData)
 {
 	if (!movesFromFile.empty())
 	{
@@ -82,7 +83,7 @@ bool Player::GetNextMove(std::string& input, ChessBoard::Board &gameBoard, std::
 	{
 		srand(static_cast<unsigned int>(time(nullptr)));
 		seed_for_random_move++;
-		std::pair<short, short> random_move = GetRandomMove(gameBoard, seed_for_random_move);
+		std::pair<short, short> random_move = GetRandomMove(gameBoard, seed_for_random_move, inMoveData);
 		
 		input = std::to_string(random_move.first) + ' ' + std::to_string(random_move.second);
 		return true;
@@ -91,39 +92,41 @@ bool Player::GetNextMove(std::string& input, ChessBoard::Board &gameBoard, std::
 	return true;
 }
 
-std::pair<short,short> Player::GetRandomMove(ChessBoard::Board& gameBoard, int seed)
-{
-	std::vector<int> list_source(0);
-	std::vector<int> list_destination(0);
-
+std::pair<short,short> Player::GetRandomMove(
+	ChessBoard::Board& gameBoard, 
+	int seed, 
+	const ChessBoard::MoveData& inMoveData
+) {
 	std::deque<std::pair<short, short>> myQueue;
 
-	gameBoard.getPossibleMoves(myQueue);
+	gameBoard.getPossibleMoves(myQueue, inMoveData);
 
 	srand(static_cast<unsigned int>(time(nullptr) / seed));
 
 	std::pair<short, short> nextMove = myQueue.at(rand() % myQueue.size());
 
-	/*
-	for (int i = 0; i < 64 ; i++)
-	{
-		if (gameBoard.theSpaces[i]->currentPiece->myColor == this->myColor)
-		{
-			list_source.push_back(i);
-		}
-
-		// TO DO: Check for castling, and if it's still legal, add one or two options for castling
-		/* To check for castling:
-			1. No pieces between king and rook.
-			2. Neither king nor rook has moved yet.
-			3. King will not move out of, through, or into check.
-
-		else list_destination.push_back(i);
-	}
-	*/
-
 	return nextMove;
 }
+
+
+/*
+for (int i = 0; i < 64 ; i++)
+{
+	if (gameBoard.theSpaces[i]->currentPiece->myColor == this->myColor)
+	{
+		list_source.push_back(i);
+	}
+
+	// TO DO: Check for castling, and if it's still legal, add one or two options for castling
+	/* To check for castling:
+		1. No pieces between king and rook.
+		2. Neither king nor rook has moved yet.
+		3. King will not move out of, through, or into check.
+
+	else list_destination.push_back(i);
+}
+*/
+
 
 #if 0
 bool Player::GetRandomMove(char *input, ChessBoard::Board &gameBoard, int seed)
