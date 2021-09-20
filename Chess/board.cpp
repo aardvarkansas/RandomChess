@@ -86,89 +86,76 @@ ChessBoard::Space & ChessBoard::Space::operator= (const Space &&mySpace)
 }
  */
 
-void ChessBoard::Space::GetLSpaces(Space theLSpaces[8])
+void ChessBoard::Space::GetLSpaces(short theLSpaces[8]) const
 {
-    
     for (size_t i=0;i<8;i++)
     {
-		theLSpaces[i].spaceID = -1;
+		theLSpaces[i] = -1;
     }
     
     // up two, left one
-	if ((this->spaceID - 17) >= 0 && (this->spaceID % 8)>0) theLSpaces[0].spaceID = this->spaceID - 17;
+	if ((this->spaceID - 17) >= 0 && (this->spaceID % 8)>0) theLSpaces[0] = this->spaceID - 17;
     
     // up one, left two 
-	if ((this->spaceID - 10) >= 0 && (this->spaceID % 8)>1) theLSpaces[1].spaceID = this->spaceID - 10;
+	if ((this->spaceID - 10) >= 0 && (this->spaceID % 8)>1) theLSpaces[1] = this->spaceID - 10;
     
     // up two, right one
-	if ((this->spaceID - 15) >= 0 && (this->spaceID % 8) < 7) theLSpaces[2].spaceID = this->spaceID - 15;
+	if ((this->spaceID - 15) >= 0 && (this->spaceID % 8) < 7) theLSpaces[2] = this->spaceID - 15;
     
 	// up one, right two
 	// can't be in bottom row, or rightmost two columns
-	if ((this->spaceID - 8) >= 0 && (this->spaceID % 8) < 6) theLSpaces[3].spaceID = this->spaceID - 6;
+	if ((this->spaceID - 8) >= 0 && (this->spaceID % 8) < 6) theLSpaces[3] = this->spaceID - 6;
 
 	// down one, right two
 	// can't be in bottom row, or rightmost two columns
-	if ((this->spaceID + 10) <= 63 && (this->spaceID % 8) < 6) theLSpaces[4].spaceID = this->spaceID + 10;
+	if ((this->spaceID + 10) <= 63 && (this->spaceID % 8) < 6) theLSpaces[4] = this->spaceID + 10;
 	
 	// down one, left two
 	// can't be in bottom row, or leftmost two columns
-	if ((this->spaceID + 6) <= 63 && (this->spaceID % 8) > 1) theLSpaces[5].spaceID = this->spaceID + 6;
+	if ((this->spaceID + 6) <= 63 && (this->spaceID % 8) > 1) theLSpaces[5] = this->spaceID + 6;
 
 	// down two, right one
 	// can't be in bottom two rows, or leftmost column
-	if ((this->spaceID + 17) <= 63 && (this->spaceID % 8) < 7) theLSpaces[6].spaceID = this->spaceID + 17;
+	if ((this->spaceID + 17) <= 63 && (this->spaceID % 8) < 7) theLSpaces[6] = this->spaceID + 17;
 
 	// down two, left one
 	// can't be in bottom two rows, or rightmost column
-	if ((this->spaceID + 15) <= 63 && (this->spaceID % 8) > 0) theLSpaces[7].spaceID = this->spaceID + 15;
-
+	if ((this->spaceID + 15) <= 63 && (this->spaceID % 8) > 0) theLSpaces[7] = this->spaceID + 15;
 }
 
-
-void ChessBoard::Space::GetAdjacentSpaces(Space *theSpaces)
+void ChessBoard::Space::GetAdjacentSpaces(short theSpaces[8]) const
 {
     
     for (size_t i=0;i<8;i++)
     {
-        theSpaces[i].spaceID = -1;
+        theSpaces[i] = -1;
     }
     
     //space directly above this one
-    if (this->spaceID > 7) theSpaces[spaceRelativePosition::up].spaceID = this->spaceID - 8;
+    if (this->spaceID > 7) theSpaces[spaceRelativePosition::up] = this->spaceID - 8;
     
     //above right
-    if (this->spaceID > 7 && (this->spaceID%8) < 7) theSpaces[spaceRelativePosition::upRight].spaceID = this->spaceID - 7;
+    if (this->spaceID > 7 && (this->spaceID%8) < 7) theSpaces[spaceRelativePosition::upRight] = this->spaceID - 7;
     
     //right
-    if ((this->spaceID%8) <7) theSpaces[spaceRelativePosition::right].spaceID = this->spaceID + 1;
+    if ((this->spaceID%8) <7) theSpaces[spaceRelativePosition::right] = this->spaceID + 1;
     
     //below right
-    if (this->spaceID < 56 && (this->spaceID%8) < 7) theSpaces[spaceRelativePosition::downRight].spaceID = this->spaceID + 9;
+    if (this->spaceID < 56 && (this->spaceID%8) < 7) theSpaces[spaceRelativePosition::downRight] = this->spaceID + 9;
     
     //below
-     if (this->spaceID < 56) theSpaces[spaceRelativePosition::down].spaceID = this->spaceID + 8;
+     if (this->spaceID < 56) theSpaces[spaceRelativePosition::down] = this->spaceID + 8;
     
     //below left
-    if (this->spaceID < 56 && (this->spaceID%8) != 0) theSpaces[spaceRelativePosition::downLeft].spaceID = this->spaceID + 7;
+    if (this->spaceID < 56 && (this->spaceID%8) != 0) theSpaces[spaceRelativePosition::downLeft] = this->spaceID + 7;
     
     //left
-     if ((this->spaceID%8) != 0) theSpaces[spaceRelativePosition::left].spaceID = this->spaceID - 1;
+     if ((this->spaceID%8) != 0) theSpaces[spaceRelativePosition::left] = this->spaceID - 1;
     
     //above left
-    if (this->spaceID > 7 && (this->spaceID%8) != 0) theSpaces[spaceRelativePosition::upLeft].spaceID = this->spaceID - 9;
+    if (this->spaceID > 7 && (this->spaceID%8) != 0) theSpaces[spaceRelativePosition::upLeft] = this->spaceID - 9;
     
 }
-    
-void ChessBoard::Space::InitializeAdjacentSpaces()
-    {
-        for (size_t i=0;i<8;++i)
-        {
-           // this->adjacentSpaces[i] = new Space;
-           // this->adjacentSpaces[i]->spaceID = -1;
-        }
-    }
-
 
 ChessBoard::Board::Board()
 {
@@ -307,7 +294,7 @@ ChessBoard::Board::Board(const ChessBoard::Board &rhs)
 }
 
 // This function is used to print the terminal version of the chess board.
-std::string ChessBoard::Board::PurpleOrOrange(const int spaceID)
+std::string ChessBoard::Board::PurpleOrOrange(const int spaceID) const
 {
     std::string myType; // type of piece, e.g., bishop pawn rook king queen
 
@@ -321,7 +308,7 @@ std::string ChessBoard::Board::PurpleOrOrange(const int spaceID)
     
     return myType;
 }
-void ChessBoard::Board::PrintBoard()
+void ChessBoard::Board::PrintBoard() const
 {
 	// print space numbers (for debugging gameplay)
 	for (int i = 0; i < 64; ++i)
@@ -387,7 +374,7 @@ void ChessBoard::Board::ImportJSON(std::string& in_board_array)
     }*/
 }
 
-void ChessBoard::Board::ExportJSON(std::string& out_board_array)
+void ChessBoard::Board::ExportJSON(std::string& out_board_array, const MoveData& inMoveData) const
 {
     std::string my_output;
 
@@ -399,20 +386,20 @@ void ChessBoard::Board::ExportJSON(std::string& out_board_array)
         if (i < 63) my_output += ",";
     }
 
-    std::deque<std::pair<short, short>> moveQueue;
-    this->getPossibleMoves(moveQueue);
+   /* std::deque<std::pair<short, short>> moveQueue;
+    this->getPossibleMoves(moveQueue, inMoveData);
 
     for (std::pair<short, short> my_move : moveQueue)
     {
         //my_output += "," + std::to_string(my_move.first) + ","
           //  + std::to_string(my_move.second);
-    }
+    }*/
 
     out_board_array = my_output;
 }
 
 
-void ChessBoard::Board::PrintMoves()
+void ChessBoard::Board::PrintMoves() const
 {
     int i(0);
     for (std::string theMove : this->theMoves)
@@ -420,11 +407,9 @@ void ChessBoard::Board::PrintMoves()
         i++;
         std::cerr << "Move #" << std::to_string(i) << " " << theMove << "\n";
     }
-        
 }
 
-
-std::string ChessBoard::Board::GetPieceName(Piece::pieceType thePiece)
+std::string ChessBoard::Board::GetPieceName(const Piece::pieceType thePiece) const
 {
     switch (thePiece)
     {
@@ -451,14 +436,12 @@ std::string ChessBoard::Board::GetPieceName(Piece::pieceType thePiece)
             break;
         default:
             return "unknown";
-            break;
-            
+            break;       
     }
-    
 }
 
 ChessBoard::moveErrorCodes ChessBoard::Board::Move(const short start, const short destination, 
-    MoveData& outMoveData,
+    const MoveData& inMoveData, MoveData& outMoveData,
     const Piece::pieceType pawn_trade_piece)
 {
     std::string startString, destinationString;
@@ -488,9 +471,13 @@ ChessBoard::moveErrorCodes ChessBoard::Board::Move(const short start, const shor
         return this->movesAttempted[moveKey];
     }
 
-	int returnCode = ValidateMove(start, destination, outMoveData);
+	int returnCode = ValidateMove(start, destination, inMoveData, outMoveData);
 
-    if (returnCode == SUCCESS || returnCode == CASTLE || returnCode == PAWN_TRADE)
+    // Add the spaces to the list of spaces needing an update by the UI.
+    outMoveData.spacesToDraw.push_back(start);
+    outMoveData.spacesToDraw.push_back(destination);
+
+    if (returnCode == SUCCESS || returnCode == CASTLE || returnCode == PAWN_TRADE || returnCode == EN_PASSANT)
     {
         // clear the per-move buffer of moves attempted
         movesAttempted.clear();
@@ -539,21 +526,51 @@ ChessBoard::moveErrorCodes ChessBoard::Board::Move(const short start, const shor
             this->theSpaces[rook_destination]->currentPiece->hasMoved = true;
             this->theSpaces[rook_start]->currentPiece = rook_temp;
 
+            // Add the rook's spaces to the list of spaces needing an update by the UI.
+            outMoveData.spacesToDraw.push_back(rook_start);
+            outMoveData.spacesToDraw.push_back(rook_destination);
+            
         }
         else if (returnCode == PAWN_TRADE)
         {
-            this->theSpaces[destination]->currentPiece->myType = Piece::pieceType::queen;
+            this->theSpaces[destination]->currentPiece->myType = pawn_trade_piece;
+            // Space needs to be redrawn by the UI to show the new piece.
+            outMoveData.spacesToDraw.push_back(destination);
+        }
+        else if (returnCode == EN_PASSANT)
+        {
+            short spaceOfTakenPawn;
+            switch (start - destination)
+            {
+                case -7: case 9:
+                    spaceOfTakenPawn = start - 1;
+                    break;
+                case 7: case -9:
+                    spaceOfTakenPawn = start + 1;
+                    break;
+            }
+
+            capturedPieceString = "_x" + PurpleOrOrange(spaceOfTakenPawn);
+            this->theSpaces[spaceOfTakenPawn]->currentPiece->myType = Piece::pieceType::empty;
+            this->theSpaces[spaceOfTakenPawn]->currentPiece->hasMoved = false;
+            this->theSpaces[spaceOfTakenPawn]->currentPiece->myColor = Piece::color::none;
+
+            outMoveData.spacesToDraw.push_back(spaceOfTakenPawn);
         }
 
-        this->theMoves.push_back(std::to_string(theMoves.size()) + "_" + std::to_string((int)this->theSpaces[destination]->currentPiece->myType) + "_" + std::to_string((int)this->theSpaces[destination]->currentPiece->myColor) + "_" + std::to_string(start) + "_" + std::to_string(destination) + capturedPieceString);
+        this->theMoves.push_back(std::to_string(theMoves.size()) + "_" + 
+            std::to_string((int)this->theSpaces[destination]->currentPiece->myType) + "_" + 
+            std::to_string((int)this->theSpaces[destination]->currentPiece->myColor) + "_" + 
+            std::to_string(start) + "_" + std::to_string(destination) + capturedPieceString);
 
         //switch the move to the other color
-        (this->whoseMove == Piece::color::purple) ? this->whoseMove = Piece::color::orange : this->whoseMove = Piece::color::purple;
+        (this->whoseMove == Piece::color::purple) ? this->whoseMove = 
+            Piece::color::orange : this->whoseMove = Piece::color::purple;
 
         // See if this move puts the opposing king in check or check mate.
         if (IsInCheck(this->whoseMove, *this))
         {
-            if (IsCheckMate(this->whoseMove, *this))
+            if (IsCheckMate(this->whoseMove, *this, inMoveData))
             {
                 this->PrintBoard();
                 std::cerr << "check mate!";
@@ -561,6 +578,11 @@ ChessBoard::moveErrorCodes ChessBoard::Board::Move(const short start, const shor
                 return CHECK_MATE;
             }
             std::cerr << "\n\n Your king is in check!!!\n\n";
+        }
+        else if (IsStalemate(inMoveData))
+        {
+            std::cerr << "\n\n Stalemate!!!\n\n";
+            return STALEMATE;
         }
 
         return SUCCESS;
@@ -583,24 +605,22 @@ ChessBoard::moveErrorCodes ChessBoard::Board::Move(const short start, const shor
 				break;
 			case moveErrorCodes::EMPTY_SPACE: errorMessage = "What do you think you're doing? There's no piece there. Please try.";
 				break;
-            case moveErrorCodes::MOVING_INTO_CHECK: errorMessage = "King is in check my friend. Please don't try that again.";
+            case moveErrorCodes::MOVING_INTO_CHECK: errorMessage = "King is moving in check my friend. Please don't try that again.";
                 break;
             case moveErrorCodes::CANT_TAKE_KING: errorMessage = "You can't take the king, my friend.";
                 break;
 		}
 		std::cerr << "\n\nBAD MOVE, PUNK: " << errorMessage << "\n\n";
 
-
         return ChessBoard::moveErrorCodes(returnCode);
-
     }
 }
 
-bool ChessBoard::Board::IsCheckMate(const Piece::color king_color, ChessBoard::Board& changedState)
+bool ChessBoard::Board::IsCheckMate(const Piece::color king_color, ChessBoard::Board& changedState, const MoveData& inMoveData) const
 {
     std::deque<std::pair<short, short>> moveQueue;
         
-        changedState.getPossibleMoves(moveQueue);
+        changedState.getPossibleMoves(moveQueue, inMoveData);
 
     for (std::pair<short, short> nextMove : moveQueue)
     {
@@ -615,11 +635,10 @@ bool ChessBoard::Board::IsCheckMate(const Piece::color king_color, ChessBoard::B
 
         delete out_possible_move_changed_state;
     }
-
     return true;
 }
 
-bool ChessBoard::Board::IsInCheck(const Piece::color king_color, const ChessBoard::Board &changedState)
+bool ChessBoard::Board::IsInCheck(const Piece::color king_color, const ChessBoard::Board &changedState) const
 {
     //return false;
     bool is_in_check = false;
@@ -668,7 +687,6 @@ bool ChessBoard::Board::IsInCheck(const Piece::color king_color, const ChessBoar
                         }
                         // std::cerr << "\n\npurple pawn!\n\n\n";
                     }
-                     
                     break;
                 }
                     
@@ -738,11 +756,11 @@ bool ChessBoard::Board::IsInCheck(const Piece::color king_color, const ChessBoar
                 {
                     // std::cerr << "\n\nknight!\n\n\n";
 
-                    Space lSpaces[8];
+                    short lSpaces[8];
                     changedState.theSpaces[i]->GetLSpaces(lSpaces);
                     for (auto i = 0; i < 8; i++)
                     {
-                        if (lSpaces[i].spaceID == kingSpaceId)
+                        if (lSpaces[i] == kingSpaceId)
                         {
                             is_in_check = true;
                         }
@@ -792,7 +810,6 @@ bool ChessBoard::Board::IsInCheck(const Piece::color king_color, const ChessBoar
                         {
                             is_in_check = true;
                         }
-
                     }
                     // std::cerr << "\n\nrook!\n\n\n";
                     break;
@@ -899,14 +916,14 @@ bool ChessBoard::Board::IsInCheck(const Piece::color king_color, const ChessBoar
                 case (ChessBoard::Piece::pieceType::king):
                 {
 
-                    Space adjacentSpaces[8];
+                    short adjacentSpaces[8];
 
                     // Get the adjacent spaces of the other team's piece (in this case it's the opposing king)
                     changedState.theSpaces[i]->GetAdjacentSpaces(adjacentSpaces);
 
                     for (auto j=0;j<8;j++)
                     {
-                        if (adjacentSpaces[j].spaceID == kingSpaceId)
+                        if (adjacentSpaces[j] == kingSpaceId)
                         {
                             is_in_check = true;
                         }
@@ -926,15 +943,14 @@ bool ChessBoard::Board::IsInCheck(const Piece::color king_color, const ChessBoar
     return false;
 }
 
-bool ChessBoard::Board::IsSameTeam(const int start, const int destination)
+bool ChessBoard::Board::IsSameTeam(const int start, const int destination) const
 {
 	if (this->theSpaces[destination]->currentPiece->myColor == this->theSpaces[start]->currentPiece->myColor) return true;
 	else return false;
 }
 
-ChessBoard::Board& ChessBoard::Board::proposeChange(ChessBoard::Board &out_changedState, const int start, const int destination)
+ChessBoard::Board& ChessBoard::Board::proposeChange(ChessBoard::Board &out_changedState, const int start, const int destination) const
 {
-
     out_changedState.theSpaces[destination]->currentPiece->myColor = out_changedState.theSpaces[start]->currentPiece->myColor;
     out_changedState.theSpaces[destination]->currentPiece->myType = out_changedState.theSpaces[start]->currentPiece->myType;
     out_changedState.theSpaces[destination]->currentPiece->hasMoved = true;
@@ -942,14 +958,42 @@ ChessBoard::Board& ChessBoard::Board::proposeChange(ChessBoard::Board &out_chang
     out_changedState.theSpaces[start]->currentPiece->myColor = Piece::color::none;
     out_changedState.theSpaces[start]->currentPiece->myType = Piece::pieceType::empty;
 
-
     return out_changedState;
 }
 
-void ChessBoard::Board::getPossibleMoves(std::deque<std::pair<short, short>>& moveQueue)
+bool ChessBoard::Board::IsStalemate(const MoveData& inMoveData) const
+{
+    std::deque<std::pair<short, short>> potentialMoves;
+
+    this->getPossibleMoves(potentialMoves, inMoveData, true);
+
+    // if the proposed move puts the king in check, invalidate move
+    for (std::pair<short, short> myMove : potentialMoves)
+    {
+        ChessBoard::Board* out_changed_state = new ChessBoard::Board(*this);
+        proposeChange(*out_changed_state, myMove.first, myMove.second);
+        if (!IsInCheck(this->WhoseMove(), *out_changed_state))
+        {
+            delete out_changed_state;
+            return false;
+        }
+
+        delete out_changed_state;
+    }
+    return true;
+}
+
+// Return true if one or moves are available, else false.
+// Load all the available moves into a dequeue.
+bool ChessBoard::Board::getPossibleMoves(
+    std::deque<std::pair<short, short>>& moveQueue,
+    const MoveData& inMoveData,
+    bool oneMoveOnly) const
 {
     std::vector<int> list_origin(0);
-    std::vector<int> list_destination(0);
+
+    for (std::pair<short, short> enPassantMove : inMoveData.enPassantMoves)
+        moveQueue.push_back(enPassantMove);
 
     for (int i = 0; i < 64; i++)
     {
@@ -974,7 +1018,6 @@ void ChessBoard::Board::getPossibleMoves(std::deque<std::pair<short, short>>& mo
             case (Piece::pieceType::pawn):
             {
                 // if it's a purple pawn
-
                 if (this->theSpaces[theOrigin]->currentPiece->myColor == Piece::color::purple)
                 {
                     if (theOrigin >= 16 && this->theSpaces[theOrigin]->currentPiece->hasMoved == false
@@ -986,12 +1029,14 @@ void ChessBoard::Board::getPossibleMoves(std::deque<std::pair<short, short>>& mo
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin - 8));
                     }
                     if (theOrigin >= 7 && this->theSpaces[theOrigin - 7]->currentPiece->myColor == Piece::color::orange
-                        && this->theSpaces[theOrigin - 7]->currentPiece->myType != Piece::pieceType::king)
+                        && this->theSpaces[theOrigin - 7]->currentPiece->myType != Piece::pieceType::king
+                        && theOrigin % 8 != 0)
                     {
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin - 7));
                     }
                     if (theOrigin >= 9 && this->theSpaces[theOrigin - 9]->currentPiece->myColor == Piece::color::orange
-                        && this->theSpaces[theOrigin - 9]->currentPiece->myType != Piece::pieceType::king)
+                        && this->theSpaces[theOrigin - 9]->currentPiece->myType != Piece::pieceType::king
+                        && theOrigin % 8 != 7)
                     {
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin - 9));
                     }
@@ -1011,13 +1056,15 @@ void ChessBoard::Board::getPossibleMoves(std::deque<std::pair<short, short>>& mo
                     }
                     if (theOrigin <= NUM_SPACES - 7 && 
                         this->theSpaces[theOrigin + 7]->currentPiece->myColor == Piece::color::purple
-                        && this->theSpaces[theOrigin + 7]->currentPiece->myType != Piece::pieceType::king)
+                        && this->theSpaces[theOrigin + 7]->currentPiece->myType != Piece::pieceType::king
+                        && theOrigin %8 !=0)
                     {
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin + 7));
                     }
                     if (theOrigin <= NUM_SPACES - 9 &&
                         this->theSpaces[theOrigin + 9]->currentPiece->myColor == Piece::color::purple
-                        && this->theSpaces[theOrigin + 9]->currentPiece->myType != Piece::pieceType::king)
+                        && this->theSpaces[theOrigin + 9]->currentPiece->myType != Piece::pieceType::king
+                        && theOrigin % 8 !=7)
                     {
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin + 9));
                     }
@@ -1040,15 +1087,15 @@ void ChessBoard::Board::getPossibleMoves(std::deque<std::pair<short, short>>& mo
 
             case (Piece::pieceType::knight):
             {
-                Space lSpaces[8];
+                short lSpaces[8];
                 this->theSpaces[theOrigin]->GetLSpaces(lSpaces);
                 for (auto &elem : lSpaces)
                 {
-                    if (elem.spaceID > 0
-                        && !IsSameTeam(theOrigin, elem.spaceID)
+                    if (elem > 0
+                        && !IsSameTeam(theOrigin, elem)
                         )
                     {
-                        moveQueue.push_back(std::pair<short, short>(theOrigin, elem.spaceID));
+                        moveQueue.push_back(std::pair<short, short>(theOrigin, elem));
                     }
                 }
                 break; // break case
@@ -1097,7 +1144,6 @@ void ChessBoard::Board::getPossibleMoves(std::deque<std::pair<short, short>>& mo
                         newMoves.emplace_back(std::pair<short, short>(theOrigin, theOrigin + 2));
                 }
 
-
                 moveQueue.insert(moveQueue.end(), newMoves.begin(), newMoves.end());
 
                 break; // break case
@@ -1105,14 +1151,15 @@ void ChessBoard::Board::getPossibleMoves(std::deque<std::pair<short, short>>& mo
         }
     }
 
-    //return moveQueue;
+    if (moveQueue.size() > 0) return true;
+    else return false;
 }
 
 void ChessBoard::Board::findAvailableMoves(
     std::deque<std::pair<short, short>>& availableMoves,
     std::vector<short>& directionalIncrement,
     const short theOrigin, 
-    bool isKing)
+    bool isKing) const
 {
     for (auto& increment : directionalIncrement)
     {
@@ -1182,7 +1229,8 @@ short GetRookForCastle(short destination)
     return rook_position;
 
 }
-ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, const int destination, MoveData& outMoveData)
+ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, const int destination, 
+    const MoveData& inMoveData, MoveData& outMoveData) const
 {
 	// to do: 
 	// > Check to see whose turn
@@ -1229,7 +1277,7 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, cons
         {
             // if she's going vertically
             // this if statement checks for non-empty spaces between start and destination
-            if ((start % 8) == (destination%8))
+            if ((start % 8) == (destination % 8))
             {
                 if (start>destination)
                 {
@@ -1246,7 +1294,6 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, cons
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace -= 8;
-                        
                     }
                 }
                 else
@@ -1256,18 +1303,16 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, cons
                     {
                         if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace == destination && (
-                                                                this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
-                                                                && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
+                                    this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                                    && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor)
+                                )
                             )
                             return ILLEGAL_MOVE;
                         else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace != destination))
                             return ILLEGAL_MOVE;
                         else currentSpace += 8;
-                        
                     }
-                    
-                    
                 }
                 return SUCCESS;
                 
@@ -1407,11 +1452,11 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, cons
         {
 			if (IsSameTeam(start,destination)) return SAME_TEAM;
 
-            Space lSpaces[8];
+            short lSpaces[8];
             this->theSpaces[start]->GetLSpaces(lSpaces);
             for (size_t i=0; i<8; i++)
             {
-                if (destination == lSpaces[i].spaceID)
+                if (destination == lSpaces[i])
                 {
                     return SUCCESS;
                 }
@@ -1424,8 +1469,13 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, cons
             if (std::abs(destination - start) < 7)
                 return ILLEGAL_MOVE;
 
+            for (std::pair<short, short> myMove : inMoveData.enPassantMoves)
+            {
+                if (myMove.first == start && myMove.second == destination)
+                    return EN_PASSANT;
+            }
+
             // if it's a purple pawn
-         
             if (this->theSpaces[start]->currentPiece->myColor == Piece::color::purple)
             {
                 // if it's going one space
@@ -1779,7 +1829,7 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, cons
 
                             auto loop_interval = (destination > start) ? 1:-1;
                             auto currentSpace = start + loop_interval;
-                            while (currentSpace >= destination)
+                            do
                             {
                                 if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty)
                                     return ILLEGAL_MOVE;
@@ -1795,7 +1845,8 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, cons
                                 delete out_possible_move_changed_state;
                                 
                                 currentSpace = currentSpace + loop_interval;
-                            }
+                            } while (currentSpace != (destination + loop_interval));
+
                             return CASTLE;
                         }
                     }
@@ -1902,7 +1953,7 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, cons
     return SUCCESS;
 }
 
-ChessBoard::Piece::color ChessBoard::Board::WhoseMove()
+ChessBoard::Piece::color ChessBoard::Board::WhoseMove() const
 {
 	return this->whoseMove;
 }

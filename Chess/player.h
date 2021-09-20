@@ -13,11 +13,12 @@ public:
 	Player(ChessBoard::Piece::color myColor, bool isHuman = true);
 	~Player();
 
-	std::pair<short, short> GetNextMove(ChessBoard::Board& myBoard);
+	// These functions 
+	std::pair<short, short> GetNextMove(ChessBoard::Board& myBoard, const ChessBoard::MoveData& inMoveData);
+	bool GetNextMove(std::string& input, ChessBoard::Board& gameBoard, std::deque<std::pair<short, short>>& movesFromFile, const ChessBoard::MoveData& inMoveData);
 
-	std::pair<short, short> GetRandomMove(ChessBoard::Board& gameBoard, int seed);
-	bool GetRandomMove(char *input, ChessBoard::Board &gameBoard, int seed);
-	bool GetNextMove(std::string& input, ChessBoard::Board &gameBoard, std::deque<std::pair<short,short>> &movesFromFile);
+	std::pair<short, short> GetRandomMove(ChessBoard::Board& gameBoard, int seed, const ChessBoard::MoveData& inMoveData);
+	bool GetRandomMove(char *input, ChessBoard::Board &gameBoard, int seed, const ChessBoard::MoveData& inMoveData);
 	
 	ChessBoard::Piece::color myColor;
 
