@@ -970,15 +970,12 @@ bool ChessBoard::Board::IsStalemate(const MoveData& inMoveData) const
     // if the proposed move puts the king in check, invalidate move
     for (std::pair<short, short> myMove : potentialMoves)
     {
-        ChessBoard::Board* out_changed_state = new ChessBoard::Board(*this);
-        proposeChange(*out_changed_state, myMove.first, myMove.second);
-        if (!IsInCheck(this->WhoseMove(), *out_changed_state))
+        MoveData outMoveData;
+        moveErrorCodes ret_value = this->ValidateMove(myMove.first, myMove.second, inMoveData, outMoveData);
+        if (IsSuccessfulReturnValue(ret_value))
         {
-            delete out_changed_state;
             return false;
         }
-
-        delete out_changed_state;
     }
     return true;
 }
@@ -1030,13 +1027,13 @@ bool ChessBoard::Board::getPossibleMoves(
                     }
                     if (theOrigin >= 7 && this->theSpaces[theOrigin - 7]->currentPiece->myColor == Piece::color::orange
                         && this->theSpaces[theOrigin - 7]->currentPiece->myType != Piece::pieceType::king
-                        && theOrigin % 8 != 0)
+                        && theOrigin % 8 != 7)
                     {
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin - 7));
                     }
                     if (theOrigin >= 9 && this->theSpaces[theOrigin - 9]->currentPiece->myColor == Piece::color::orange
                         && this->theSpaces[theOrigin - 9]->currentPiece->myType != Piece::pieceType::king
-                        && theOrigin % 8 != 7)
+                        && theOrigin % 8 != 0)
                     {
                         moveQueue.push_back(std::pair<short, short>(theOrigin, theOrigin - 9));
                     }
@@ -1789,8 +1786,6 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, cons
                 // if he's going horizontally, checks for non-empty spaces
                 else if (floor(start/8)==floor(destination/8))
                 {
-                    // TO DO ADD CASTLING CHECK.
-
                     if (abs(start-destination)==2)
                     {
                         // Check to make sure the king hasn't moved yet.
@@ -1834,18 +1829,21 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, cons
                                 if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty)
                                     return ILLEGAL_MOVE;
 
-                                ChessBoard::Board* out_possible_move_changed_state = new ChessBoard::Board(*this);
-                                // Need to propose change on current space because king can't move THRU check.
-                                proposeChange(*out_possible_move_changed_state, start, currentSpace);
-                                if (IsInCheck(this->theSpaces[start]->currentPiece->myColor, *out_possible_move_changed_state))
+                                // If it's within the king's travel path, see if the king is in check.
+                                if (currentSpace != destination + loop_interval)
                                 {
+                                    ChessBoard::Board* out_possible_move_changed_state = new ChessBoard::Board(*this);
+                                    // Need to propose change on current space because king can't move THRU check.
+                                    proposeChange(*out_possible_move_changed_state, start, currentSpace);
+                                    if (IsInCheck(this->theSpaces[start]->currentPiece->myColor, *out_possible_move_changed_state))
+                                    {
+                                        delete out_possible_move_changed_state;
+                                        return MOVING_INTO_CHECK;
+                                    }
                                     delete out_possible_move_changed_state;
-                                    return MOVING_INTO_CHECK;
                                 }
-                                delete out_possible_move_changed_state;
-                                
                                 currentSpace = currentSpace + loop_interval;
-                            } while (currentSpace != (destination + loop_interval));
+                            } while (currentSpace != rookForCastle);
 
                             return CASTLE;
                         }

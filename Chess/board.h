@@ -57,6 +57,13 @@ namespace ChessBoard
         STALEMATE = 12,
     };
 
+    inline static const bool IsSuccessfulReturnValue(const moveErrorCodes ret_value)
+    {
+        if (ret_value == SUCCESS || ret_value == CASTLE || ret_value == PAWN_TRADE || ret_value == EN_PASSANT)
+            return true;
+        return false;
+    }
+
     class Piece
     {
     public:
