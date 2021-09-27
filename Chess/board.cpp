@@ -627,7 +627,7 @@ bool ChessBoard::Board::IsCheckMate(const Piece::color king_color, ChessBoard::B
         ChessBoard::Board* out_possible_move_changed_state = new ChessBoard::Board(changedState);
 
         proposeChange(*out_possible_move_changed_state, nextMove.first, nextMove.second);
-        if (!IsInCheck(this->theSpaces[nextMove.first]->currentPiece->myColor, *out_possible_move_changed_state))
+        if (!IsInCheck(changedState.WhoseMove(), *out_possible_move_changed_state))
         {
             delete out_possible_move_changed_state;
             return false;
@@ -1279,7 +1279,7 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, cons
                 if (start>destination)
                 {
                     int currentSpace = start - 8;
-                    while (currentSpace>0 && currentSpace>=destination)
+                    while (currentSpace >= 0 && currentSpace>=destination)
                     {
                         if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace == destination && (
@@ -1653,7 +1653,7 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, cons
                 if (start > destination)
                 {
                     int currentSpace = start - 8;
-                    while (currentSpace > 0 && currentSpace >= destination)
+                    while (currentSpace >= 0 && currentSpace >= destination)
                     {
                         if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                             && (currentSpace == destination && (
@@ -1747,7 +1747,7 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(const int start, cons
                         if (start > (destination + 8)) return ILLEGAL_MOVE;
                         
                         int currentSpace = start - 8; //go to the next space in the column
-                        while (currentSpace>0 && currentSpace>=destination)
+                        while (currentSpace >= 0 && currentSpace >= destination)
                         {
                             if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
                                 && (currentSpace == destination && (this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
