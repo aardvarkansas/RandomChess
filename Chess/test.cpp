@@ -18,13 +18,13 @@ bool test::instantiate_piece()
 bool test::adjacent_spaces()
 {
 	ChessBoard::Board myBoard;
-	ChessBoard::Space adjacentSpaces[8];
+	short adjacentSpaces[8];
 
 
 	myBoard.theSpaces[62]->GetAdjacentSpaces(adjacentSpaces);
 
 	// operator overload
-	adjacentSpaces[0] = *myBoard.theSpaces[11];
+	ChessBoard::Space mySpace = *myBoard.theSpaces[11];
 
 	std::cout << "adj spaces: " << sizeof(adjacentSpaces) << std::endl;
 	std::cout << "int: " << sizeof(int) << std::endl;
@@ -34,7 +34,7 @@ bool test::adjacent_spaces()
 
 	for (size_t i = 0; i<8; ++i)
 	{
-		std::cout << std::endl << adjacentSpaces[i].spaceID;
+		std::cout << std::endl << adjacentSpaces[i];
 	}
 
 	return true;

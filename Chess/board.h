@@ -21,26 +21,7 @@
 
 
 namespace ChessBoard
-{
-    /*class Move
-    {
-    public:
-        
-        Move();
-        Move (int start, int destination)
-        {
-            this->start = start;
-            this->destination = destination;
-        }
-        ~Move();
-        
-    private:
-        int start;
-        int destination;
-    };*/
-    
-    
-    // to do typedef and make a return value for validate move
+{   
     enum moveErrorCodes : short {
         SUCCESS = 0,
         CASTLE = 1,
@@ -59,7 +40,8 @@ namespace ChessBoard
 
     inline static const bool IsSuccessfulReturnValue(const moveErrorCodes ret_value)
     {
-        if (ret_value == SUCCESS || ret_value == CASTLE || ret_value == PAWN_TRADE || ret_value == EN_PASSANT)
+        if (ret_value == SUCCESS || ret_value == CASTLE 
+            || ret_value == PAWN_TRADE || ret_value == EN_PASSANT)
             return true;
         return false;
     }
@@ -156,26 +138,36 @@ namespace ChessBoard
 
         std::string PurpleOrOrange(const int spaceID) const;
 		Piece::color WhoseMove() const;
-        moveErrorCodes Move(const short start, const short destination, const MoveData& inMoveData, MoveData& outMoveData,
+        moveErrorCodes Move(const short start, const short destination, 
+            const MoveData& inMoveData, MoveData& outMoveData,
             const Piece::pieceType pawn_trade_piece = Piece::pieceType::queen);
-        bool IsInCheck(const Piece::color king_color, const ChessBoard::Board &changedState) const;
-        bool IsCheckMate(const Piece::color king_color, ChessBoard::Board& changedState, const MoveData& inMoveData) const;
+        bool IsInCheck(const Piece::color king_color, 
+            const ChessBoard::Board &changedState) const;
+        bool IsCheckMate(const Piece::color king_color, ChessBoard::Board& changedState, 
+            const MoveData& inMoveData) const;
         bool IsStalemate(const MoveData& inMoveData) const;
 		bool IsSameTeam(const int start, const int destination) const;
-        bool getPossibleMoves(std::deque<std::pair<short, short>>& moveQueue, const MoveData& inMoveData, bool oneMoveOnly = false) const;
+        bool getPossibleMoves(std::deque<std::pair<short, short>>& moveQueue, 
+            const MoveData& inMoveData, bool oneMoveOnly = false) const;
         void findAvailableMoves(
             std::deque<std::pair<short, short>>& newMoves, 
             std::vector<short>& directionalIncrement,
             const short theOrigin,
             bool isKing = false) const;
-        ChessBoard::moveErrorCodes ValidateMove(const int start, const int destination, const MoveData& inMoveData, MoveData& outMoveData) const;
-        ChessBoard::Board& proposeChange(ChessBoard::Board &changedState, const int start, const int destination) const;
+        
+        ChessBoard::moveErrorCodes ValidateMove(
+            const int start, const int destination, 
+            const MoveData& inMoveData, MoveData& outMoveData) const;
+        ChessBoard::moveErrorCodes ValidateKnightMove(
+            const int start, const int destination,
+            const MoveData& inMoveData, MoveData& outMoveData) const;
+        ChessBoard::moveErrorCodes ChessBoard::Board::ValidateQueenMove(
+            const int start, const int destination,
+            const MoveData& inMoveData, MoveData& outMoveData) const;
 
-		
+        ChessBoard::Board& proposeChange(ChessBoard::Board &changedState, 
+            const int start, const int destination) const;
+
         std::string GetPieceName(const Piece::pieceType) const;
-        
-        
     };
-    
-
 }

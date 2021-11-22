@@ -41,20 +41,22 @@ bool ConfirmQuit()
 
 }
 
-std::pair<short, short> Player::GetNextMove(ChessBoard::Board &myBoard, const ChessBoard::MoveData& inMoveData)
+std::pair<short, short> Player::GetNextMove(
+	ChessBoard::Board &myBoard, const ChessBoard::MoveData& inMoveData)
 {
-	char input[32];
 	srand(static_cast<unsigned int>(time(nullptr)));
 	seed_for_random_move++;
 	return GetRandomMove(myBoard, seed_for_random_move, inMoveData);
 }
 // If this returns false, that means the player has quit.
-bool Player::GetNextMove(std::string& input, ChessBoard::Board &gameBoard, std::deque<std::pair<short, short>> &movesFromFile, 
+bool Player::GetNextMove(std::string& input, 
+	ChessBoard::Board &gameBoard, 
+	std::deque<std::pair<short, short>> &movesFromFile, 
 	const ChessBoard::MoveData& inMoveData)
 {
 	if (!movesFromFile.empty())
 	{
-		for (int i = 0; i < input.length(); i++)
+		for (size_t i = 0; i < input.length(); i++)
 			input[i] = '\0';
 		std::string input_from_file;
 		input_from_file.append(std::to_string(movesFromFile.front().first) + ' ' + 
@@ -107,7 +109,6 @@ std::pair<short,short> Player::GetRandomMove(
 
 	return nextMove;
 }
-
 
 /*
 for (int i = 0; i < 64 ; i++)
