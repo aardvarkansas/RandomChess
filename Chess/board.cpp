@@ -16,7 +16,7 @@
 #include <locale>
 #include <cctype>
 #include <cmath>
-
+#include <vector>
 
 ChessBoard::Piece::Piece()
 {
@@ -1261,10 +1261,6 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(
     const int start, const int destination, 
     const MoveData& inMoveData, MoveData& outMoveData) const
 {
-	// to do: 
-	// > Check to see whose turn
-	// > Check to see if a piece is trying to take its own color
-
     if (start==destination || 
 		start > 64 || 
 		destination > 64 || 
@@ -1512,8 +1508,6 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(
                 //if the starting position is on the front line of pawns
                 else if (start >= 8 && start <=15)
                 {
-                    // TODO: Implement en passant.
-
                     //if it's going two spaces
                     if (destination == start+16 && this->theSpaces[destination]->currentPiece->myType == Piece::pieceType::empty)
                     {
@@ -1552,85 +1546,12 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(
             // if they're in the same column
             if ((start % 8) == (destination % 8))
             {
-                if (start > destination)
-                {
-                    int currentSpace = start - 8;
-                    while (currentSpace >= 0 && currentSpace >= destination)
-                    {
-                        if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                            && (currentSpace == destination && (
-                                this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
-                                && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
-                            )
-                            return ILLEGAL_MOVE;
-                        else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                            && (currentSpace != destination))
-                            return ILLEGAL_MOVE;
-                        else if (currentSpace == destination) return SUCCESS;
-                        else currentSpace -= 8;
-                    }
-                }
-                else
-                {
-                    int currentSpace = start + 8;
-                    while (currentSpace < NUM_SPACES && currentSpace <= destination)
-                    {
-                        if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                            && (currentSpace == destination && (
-                                this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
-                                && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
-                            )
-                            return ILLEGAL_MOVE;
-                        else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                            && (currentSpace != destination))
-                            return ILLEGAL_MOVE;
-                        else if (currentSpace == destination) return SUCCESS;
-                        else currentSpace += 8;
-
-                    }
-                }
+                return ValidateVerticalMove(start, destination, inMoveData, outMoveData);
             }
             // are they in the same row?
             else if (floor(start / 8) == floor(destination / 8))
             {
-                if (start > destination)
-                {
-                    int currentSpace = start - 1;
-                    while (currentSpace >= destination)
-                    {
-                        if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                            && (currentSpace == destination && (
-                                this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
-                                && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
-                            )
-                            return ILLEGAL_MOVE;
-
-                        else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                            && (currentSpace != destination))
-                            return ILLEGAL_MOVE;
-                        else if (currentSpace == destination) return SUCCESS;
-                        else currentSpace -= 1;
-                    }
-                }
-                //destination is greater than start
-                else
-                {
-                    int currentSpace = start + 1;
-                    while (currentSpace <= destination)
-                    {
-                        if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                            && (currentSpace == destination && (
-                                this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
-                                && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
-                            )
-                            return ILLEGAL_MOVE;
-                        else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                            && (currentSpace != destination))
-                            return ILLEGAL_MOVE;
-                        else if (currentSpace == destination) return SUCCESS;
-                        else currentSpace += 1;
-                    }
-                }
+                return ValidateHorizontalMove(start, destination, inMoveData, outMoveData);
             }
 
             else return ILLEGAL_MOVE;
@@ -1865,8 +1786,127 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateKnightMove(const int start
             return SUCCESS;
         }
     }
-
     return ILLEGAL_MOVE;
+}
+
+
+ChessBoard::moveErrorCodes ChessBoard::Board::ValidateHorizontalMove(
+    const int start, const int destination,
+    const MoveData& inMoveData, MoveData& outMoveData) const
+{
+    if (start > destination)
+    {
+        int currentSpace = start - 1;
+        while (currentSpace >= destination)
+        {
+            if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
+                && (currentSpace == destination && (
+                    this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                    && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
+                )
+                return ILLEGAL_MOVE;
+            else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
+                && (currentSpace != destination))
+                return ILLEGAL_MOVE;
+            else currentSpace -= 1;
+        }
+    }
+    //destination is greater than start
+    else
+    {
+        int currentSpace = start + 1;
+        while (currentSpace <= destination)
+        {
+            if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
+                && (currentSpace == destination && (
+                    this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                    && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
+                )
+                return ILLEGAL_MOVE;
+            else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
+                && (currentSpace != destination))
+                return ILLEGAL_MOVE;
+            else currentSpace += 1;
+        }
+    }
+    return SUCCESS;
+}
+
+ChessBoard::moveErrorCodes ChessBoard::Board::ValidateVerticalMove(const int start, const int destination,
+    const MoveData& inMoveData, MoveData& outMoveData) const
+{
+    if (start > destination)
+    {
+        int currentSpace = start - 8;
+        while (currentSpace >= 0 && currentSpace >= destination)
+        {
+            if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
+                && (currentSpace == destination && (
+                    this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                    && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
+                )
+                return ILLEGAL_MOVE;
+            else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
+                && (currentSpace != destination))
+                return ILLEGAL_MOVE;
+            else currentSpace -= 8;
+        }
+    }
+    else
+    {
+        int currentSpace = start + 8;
+        while (currentSpace < NUM_SPACES && currentSpace <= destination)
+        {
+            if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
+                && (currentSpace == destination && (
+                    this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
+                    && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor)
+                    )
+                )
+                return ILLEGAL_MOVE;
+            else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
+                && (currentSpace != destination))
+                return ILLEGAL_MOVE;
+            else currentSpace += 8;
+        }
+    }
+    return SUCCESS;
+}
+
+ChessBoard::moveErrorCodes ChessBoard::Board::ValidateDiagonalMove(
+    const int start, const int destination,
+    const MoveData& inMoveData, MoveData& outMoveData) const
+{
+    int currentSpace = start;
+    while (currentSpace < NUM_SPACES && currentSpace >= 0)
+    {
+        if ((destination - start) % 7 == 0)
+        {
+            if (destination > start) currentSpace += 7;
+            else currentSpace -= 7;
+        }
+        else if ((destination - start) % 9 == 0)
+        {
+            if (destination > start) currentSpace += 9;
+            else currentSpace -= 9;
+        }
+
+        if (currentSpace != destination
+            && this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty)
+        {
+            // if it's trying to cross over a non-empty space
+            return ILLEGAL_MOVE;
+        }
+
+        if (this->theSpaces[currentSpace]->currentPiece->myColor ==
+            this->theSpaces[start]->currentPiece->myColor) return ILLEGAL_MOVE;
+
+        if (currentSpace == destination)
+        {
+            break;
+        }
+    }
+    return SUCCESS;
 }
 
 ChessBoard::moveErrorCodes ChessBoard::Board::ValidateQueenMove(const int start, const int destination,
@@ -1876,85 +1916,13 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateQueenMove(const int start,
     // this if statement checks for non-empty spaces between start and destination
     if ((start % 8) == (destination % 8))
     {
-        if (start > destination)
-        {
-            int currentSpace = start - 8;
-            while (currentSpace >= 0 && currentSpace >= destination)
-            {
-                if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                    && (currentSpace == destination && (
-                        this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
-                        && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
-                    )
-                    return ILLEGAL_MOVE;
-                else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                    && (currentSpace != destination))
-                    return ILLEGAL_MOVE;
-                else currentSpace -= 8;
-            }
-        }
-        else
-        {
-            int currentSpace = start + 8;
-            while (currentSpace < NUM_SPACES && currentSpace <= destination)
-            {
-                if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                    && (currentSpace == destination && (
-                        this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
-                        && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor)
-                        )
-                    )
-                    return ILLEGAL_MOVE;
-                else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                    && (currentSpace != destination))
-                    return ILLEGAL_MOVE;
-                else currentSpace += 8;
-            }
-        }
-        return SUCCESS;
-
+        return ValidateVerticalMove(start, destination, inMoveData, outMoveData);
     }
 
     // if she's going horizontally, checks for non-empty spaces
     else if (floor(start / 8) == floor(destination / 8))
     {
-        if (start > destination)
-        {
-            int currentSpace = start - 1;
-            while (currentSpace >= destination)
-            {
-                if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                    && (currentSpace == destination && (
-                        this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
-                        && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
-                    )
-                    return ILLEGAL_MOVE;
-                else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                    && (currentSpace != destination))
-                    return ILLEGAL_MOVE;
-                else currentSpace -= 1;
-            }
-        }
-        //destination is greater than start
-        else
-        {
-            int currentSpace = start + 1;
-            while (currentSpace <= destination)
-            {
-                if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                    && (currentSpace == destination && (
-                        this->theSpaces[destination]->currentPiece->myType != Piece::pieceType::empty
-                        && this->theSpaces[start]->currentPiece->myColor == this->theSpaces[destination]->currentPiece->myColor))
-                    )
-                    return ILLEGAL_MOVE;
-                else if (this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty
-                    && (currentSpace != destination))
-                    return ILLEGAL_MOVE;
-                else currentSpace += 1;
-
-            }
-        }
-        return SUCCESS;
+        return ValidateHorizontalMove(start, destination, inMoveData, outMoveData);
     }
 
     // if she's moving diagonally, checks for non-empty spaces
@@ -1962,36 +1930,7 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateQueenMove(const int start,
         && (this->theSpaces[destination]->currentPiece->myColor != 
             this->theSpaces[start]->currentPiece->myColor))
     {
-        int currentSpace = start;
-        while (currentSpace < NUM_SPACES && currentSpace >= 0)
-        {
-            if ((destination - start) % 7 == 0)
-            {
-                if (destination > start) currentSpace += 7;
-                else currentSpace -= 7;
-            }
-            else if ((destination - start) % 9 == 0)
-            {
-                if (destination > start) currentSpace += 9;
-                else currentSpace -= 9;
-            }
-
-            if (currentSpace != destination
-                && this->theSpaces[currentSpace]->currentPiece->myType != Piece::pieceType::empty)
-            {
-                // if it's trying to cross over a non-empty space
-                return ILLEGAL_MOVE;
-            }
-
-            if (this->theSpaces[currentSpace]->currentPiece->myColor ==
-                this->theSpaces[start]->currentPiece->myColor) return ILLEGAL_MOVE;
-
-            if (currentSpace == destination)
-            {
-                break;
-            }
-        }
-        return SUCCESS;
+        return ValidateDiagonalMove(start, destination, inMoveData, outMoveData);
     }
 
     else return ILLEGAL_MOVE;

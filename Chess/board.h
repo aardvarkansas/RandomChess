@@ -18,6 +18,7 @@
 #define NUM_SPACES 64
 
 #endif /* defined(__Chess__board__) */
+#include <map>
 
 
 namespace ChessBoard
@@ -77,7 +78,7 @@ namespace ChessBoard
         
     };
 
-    enum spaceRelativePosition : short
+    static enum spaceRelativePosition : short
     {
         up=0,
         upRight=1,
@@ -87,7 +88,7 @@ namespace ChessBoard
         downLeft=5,
         left=6,
         upLeft=7
-    };
+    } spaceRelativePosition;
 
     class Space
     {
@@ -162,6 +163,17 @@ namespace ChessBoard
             const int start, const int destination,
             const MoveData& inMoveData, MoveData& outMoveData) const;
         ChessBoard::moveErrorCodes ChessBoard::Board::ValidateQueenMove(
+            const int start, const int destination,
+            const MoveData& inMoveData, MoveData& outMoveData) const;
+        ChessBoard::moveErrorCodes ChessBoard::Board::ValidateHorizontalMove(
+            const int start, const int destination,
+            const MoveData& inMoveData, MoveData& outMoveData) const;
+
+        ChessBoard::moveErrorCodes ChessBoard::Board::ValidateVerticalMove(
+            const int start, const int destination,
+            const MoveData& inMoveData, MoveData& outMoveData) const;
+
+        ChessBoard::moveErrorCodes ChessBoard::Board::ValidateDiagonalMove(
             const int start, const int destination,
             const MoveData& inMoveData, MoveData& outMoveData) const;
 
