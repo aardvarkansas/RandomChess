@@ -137,7 +137,7 @@ namespace ChessBoard
 
         std::unordered_map<std::string, ChessBoard::moveErrorCodes> movesAttempted;
 
-        std::string PurpleOrOrange(const int spaceID) const;
+        std::string PurpleOrOrange(const short spaceID) const;
 		Piece::color WhoseMove() const;
         moveErrorCodes Move(const short start, const short destination, 
             const MoveData& inMoveData, MoveData& outMoveData,
@@ -147,38 +147,38 @@ namespace ChessBoard
         bool IsCheckMate(const Piece::color king_color, ChessBoard::Board& changedState, 
             const MoveData& inMoveData) const;
         bool IsStalemate(const MoveData& inMoveData) const;
-		bool IsSameTeam(const int start, const int destination) const;
-        bool getPossibleMoves(std::deque<std::pair<short, short>>& moveQueue, 
+		bool IsSameTeam(const short start, const short destination) const;
+        bool GetPossibleMoves(std::deque<std::pair<short, short>>& moveQueue, 
             const MoveData& inMoveData, bool oneMoveOnly = false) const;
-        void findAvailableMoves(
+        void FindAvailableMoves(
             std::deque<std::pair<short, short>>& newMoves, 
             std::vector<short>& directionalIncrement,
             const short theOrigin,
             bool isKing = false) const;
         
         ChessBoard::moveErrorCodes ValidateMove(
-            const int start, const int destination, 
+            const short start, const short destination, 
             const MoveData& inMoveData, MoveData& outMoveData) const;
         ChessBoard::moveErrorCodes ValidateKnightMove(
-            const int start, const int destination,
+            const short start, const short destination,
             const MoveData& inMoveData, MoveData& outMoveData) const;
         ChessBoard::moveErrorCodes ChessBoard::Board::ValidateQueenMove(
-            const int start, const int destination,
+            const short start, const short destination,
             const MoveData& inMoveData, MoveData& outMoveData) const;
         ChessBoard::moveErrorCodes ChessBoard::Board::ValidateHorizontalMove(
-            const int start, const int destination,
+            const short start, const short destination,
             const MoveData& inMoveData, MoveData& outMoveData) const;
 
         ChessBoard::moveErrorCodes ChessBoard::Board::ValidateVerticalMove(
-            const int start, const int destination,
+            const short start, const short destination,
             const MoveData& inMoveData, MoveData& outMoveData) const;
 
         ChessBoard::moveErrorCodes ChessBoard::Board::ValidateDiagonalMove(
-            const int start, const int destination,
+            const short start, const short destination,
             const MoveData& inMoveData, MoveData& outMoveData) const;
 
         ChessBoard::Board& proposeChange(ChessBoard::Board &changedState, 
-            const int start, const int destination) const;
+            const short start, const short destination) const;
 
         std::string GetPieceName(const Piece::pieceType) const;
     };

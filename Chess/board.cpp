@@ -13,7 +13,6 @@
 #include <iterator>
 #include <regex>
 #include <string>
-#include <locale>
 #include <cctype>
 #include <cmath>
 #include <vector>
@@ -297,7 +296,7 @@ ChessBoard::Board::Board(const ChessBoard::Board &rhs)
 }
 
 // This function is used to print the terminal version of the chess board.
-std::string ChessBoard::Board::PurpleOrOrange(const int spaceID) const
+std::string ChessBoard::Board::PurpleOrOrange(const short spaceID) const
 {
     std::string myType; // type of piece, e.g., bishop pawn rook king queen
 
@@ -383,15 +382,6 @@ void ChessBoard::Board::ExportJSON(std::string& out_board_array, const MoveData&
         my_output += std::to_string((short)this->theSpaces[i]->currentPiece->myType);
         if (i < 63) my_output += ",";
     }
-
-   /* std::deque<std::pair<short, short>> moveQueue;
-    this->getPossibleMoves(moveQueue, inMoveData);
-
-    for (std::pair<short, short> my_move : moveQueue)
-    {
-        //my_output += "," + std::to_string(my_move.first) + ","
-          //  + std::to_string(my_move.second);
-    }*/
 
     out_board_array = my_output;
 }
@@ -627,7 +617,7 @@ bool ChessBoard::Board::IsCheckMate(
 {
     std::deque<std::pair<short, short>> moveQueue;
         
-        changedState.getPossibleMoves(moveQueue, inMoveData);
+        changedState.GetPossibleMoves(moveQueue, inMoveData);
 
     for (std::pair<short, short> nextMove : moveQueue)
     {
@@ -959,7 +949,7 @@ bool ChessBoard::Board::IsInCheck(
     return false;
 }
 
-bool ChessBoard::Board::IsSameTeam(const int start, const int destination) const
+bool ChessBoard::Board::IsSameTeam(const short start, const short destination) const
 {
 	if (this->theSpaces[destination]->currentPiece->myColor == 
         this->theSpaces[start]->currentPiece->myColor) return true;
@@ -968,8 +958,8 @@ bool ChessBoard::Board::IsSameTeam(const int start, const int destination) const
 
 ChessBoard::Board& ChessBoard::Board::proposeChange(
     ChessBoard::Board &out_changedState, 
-    const int start, 
-    const int destination) const
+    const short start,
+    const short destination) const
 {
     out_changedState.theSpaces[destination]->currentPiece->myColor = 
         out_changedState.theSpaces[start]->currentPiece->myColor;
@@ -987,7 +977,7 @@ bool ChessBoard::Board::IsStalemate(const MoveData& inMoveData) const
 {
     std::deque<std::pair<short, short>> potentialMoves;
 
-    this->getPossibleMoves(potentialMoves, inMoveData, true);
+    this->GetPossibleMoves(potentialMoves, inMoveData, true);
 
     // if the proposed move puts the king in check, invalidate move
     for (std::pair<short, short> myMove : potentialMoves)
@@ -1003,9 +993,9 @@ bool ChessBoard::Board::IsStalemate(const MoveData& inMoveData) const
     return true;
 }
 
-// Return true if one or moves are available, else false.
+// Return true if one or more moves are available, else false.
 // Load all the available moves into a dequeue.
-bool ChessBoard::Board::getPossibleMoves(
+bool ChessBoard::Board::GetPossibleMoves(
     std::deque<std::pair<short, short>>& moveQueue,
     const MoveData& inMoveData,
     bool oneMoveOnly) const
@@ -1102,7 +1092,7 @@ bool ChessBoard::Board::getPossibleMoves(
 
                 std::deque<std::pair<short, short>> newMoves;
 
-                findAvailableMoves(newMoves, directionalIncrement, theOrigin);
+                FindAvailableMoves(newMoves, directionalIncrement, theOrigin);
 
                 moveQueue.insert(moveQueue.end(), newMoves.begin(), newMoves.end());
 
@@ -1130,7 +1120,7 @@ bool ChessBoard::Board::getPossibleMoves(
 
                 std::deque<std::pair<short, short>> newMoves;
             
-                findAvailableMoves(newMoves, directionalIncrement, theOrigin);
+                FindAvailableMoves(newMoves, directionalIncrement, theOrigin);
 
                 moveQueue.insert(moveQueue.end(), newMoves.begin(), newMoves.end());
             
@@ -1143,7 +1133,7 @@ bool ChessBoard::Board::getPossibleMoves(
 
                 std::deque<std::pair<short, short>> newMoves;
 
-                findAvailableMoves(newMoves, directionalIncrement, theOrigin);
+                FindAvailableMoves(newMoves, directionalIncrement, theOrigin);
 
                 moveQueue.insert(moveQueue.end(), newMoves.begin(), newMoves.end());
 
@@ -1155,7 +1145,7 @@ bool ChessBoard::Board::getPossibleMoves(
 
                 std::deque<std::pair<short, short>> newMoves;
 
-                findAvailableMoves(newMoves, directionalIncrement, theOrigin, true);
+                FindAvailableMoves(newMoves, directionalIncrement, theOrigin, true);
 
                 // If the king hasn't moved, let's add potential castle moves
                 if (!this->theSpaces[theOrigin]->currentPiece->hasMoved)
@@ -1179,7 +1169,9 @@ bool ChessBoard::Board::getPossibleMoves(
     else return false;
 }
 
-void ChessBoard::Board::findAvailableMoves(
+// This move finder is called by GetPossibleMoves() that finds just follows the path for a piece
+// and looks for empty spaces or spaces occupied by the opposing team.
+void ChessBoard::Board::FindAvailableMoves(
     std::deque<std::pair<short, short>>& availableMoves,
     std::vector<short>& directionalIncrement,
     const short theOrigin, 
@@ -1258,7 +1250,7 @@ short GetRookForCastle(short destination)
 }
 
 ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(
-    const int start, const int destination, 
+    const short start, const short destination,
     const MoveData& inMoveData, MoveData& outMoveData) const
 {
     if (start==destination || 
@@ -1319,6 +1311,9 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(
                     this->theSpaces[start]->currentPiece->myColor)
                )
                 {
+
+                    ValidateDiagonalMove(start, destination, inMoveData, outMoveData);
+                    /* This can probably be deleted, it's replaced by ValidateDiagonalMove().
                     int currentSpace = start;
                     while (currentSpace < NUM_SPACES 
                             && currentSpace >= 0)
@@ -1351,7 +1346,7 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(
                         {
                             break;
                         }
-                    }
+                    }*/
                     return SUCCESS;
                 }
             else return ILLEGAL_MOVE;
@@ -1772,7 +1767,7 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateMove(
     return SUCCESS;
 }
 
-ChessBoard::moveErrorCodes ChessBoard::Board::ValidateKnightMove(const int start, const int destination,
+ChessBoard::moveErrorCodes ChessBoard::Board::ValidateKnightMove(const short start, const short destination,
     const MoveData& inMoveData, MoveData& outMoveData) const
 {
     if (IsSameTeam(start, destination)) return SAME_TEAM;
@@ -1791,7 +1786,7 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateKnightMove(const int start
 
 
 ChessBoard::moveErrorCodes ChessBoard::Board::ValidateHorizontalMove(
-    const int start, const int destination,
+    const short start, const short destination,
     const MoveData& inMoveData, MoveData& outMoveData) const
 {
     if (start > destination)
@@ -1832,7 +1827,7 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateHorizontalMove(
     return SUCCESS;
 }
 
-ChessBoard::moveErrorCodes ChessBoard::Board::ValidateVerticalMove(const int start, const int destination,
+ChessBoard::moveErrorCodes ChessBoard::Board::ValidateVerticalMove(const short start, const short destination,
     const MoveData& inMoveData, MoveData& outMoveData) const
 {
     if (start > destination)
@@ -1874,10 +1869,10 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateVerticalMove(const int sta
 }
 
 ChessBoard::moveErrorCodes ChessBoard::Board::ValidateDiagonalMove(
-    const int start, const int destination,
+    const short start, const short destination,
     const MoveData& inMoveData, MoveData& outMoveData) const
 {
-    int currentSpace = start;
+    short currentSpace = start;
     while (currentSpace < NUM_SPACES && currentSpace >= 0)
     {
         if ((destination - start) % 7 == 0)
@@ -1909,7 +1904,7 @@ ChessBoard::moveErrorCodes ChessBoard::Board::ValidateDiagonalMove(
     return SUCCESS;
 }
 
-ChessBoard::moveErrorCodes ChessBoard::Board::ValidateQueenMove(const int start, const int destination,
+ChessBoard::moveErrorCodes ChessBoard::Board::ValidateQueenMove(const short start, const short destination,
     const MoveData& inMoveData, MoveData& outMoveData) const
 {
     // if she's going vertically

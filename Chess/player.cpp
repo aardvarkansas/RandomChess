@@ -101,7 +101,7 @@ std::pair<short,short> Player::GetRandomMove(
 ) {
 	std::deque<std::pair<short, short>> myQueue;
 
-	gameBoard.getPossibleMoves(myQueue, inMoveData);
+	gameBoard.GetPossibleMoves(myQueue, inMoveData);
 
 	srand(static_cast<unsigned int>(time(nullptr) / seed));
 
